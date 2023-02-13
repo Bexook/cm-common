@@ -1,0 +1,35 @@
+package com.cm.common.model.dto;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.springframework.lang.NonNull;
+
+import javax.validation.constraints.Pattern;
+import java.util.List;
+
+import static com.cm.common.constant.ApplicationValidationConstants.GENERAL_TEXT_REGEX;
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class CourseDTO extends BaseDTO {
+    @NonNull
+    @JsonProperty("subject")
+    @Pattern(regexp = GENERAL_TEXT_REGEX)
+    private String subject;
+    @NonNull
+    @JsonProperty("description")
+    @Pattern(regexp = GENERAL_TEXT_REGEX)
+    private String description;
+    @JsonProperty("coursePrinciple")
+    private AppUserDTO coursePrinciple;
+    @JsonProperty("lessons")
+    private List<LessonDTO> lessons;
+    @JsonProperty("available")
+    private boolean available;
+    @ToString.Exclude
+    @JsonProperty("exam")
+    private ExamDTO exam;
+
+}
