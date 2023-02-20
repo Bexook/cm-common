@@ -1,5 +1,6 @@
-package com.cm.common.service.token;
+package com.cm.common.service.token.impl;
 
+import com.cm.common.exception.SystemException;
 import com.cm.common.model.domain.ActiveTokenEntity;
 import com.cm.common.model.domain.AppUserEntity;
 import com.cm.common.model.dto.AppUserDTO;
@@ -11,6 +12,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -20,7 +22,7 @@ import java.util.Date;
 import java.util.Objects;
 
 @Service
-public class JwtTokenService extends TokenService {
+public class TokenServiceImpl extends AccountTokenServiceImpl {
 
     @Value("${token.jwt.secret}")
     private String secretKey;
@@ -28,7 +30,7 @@ public class JwtTokenService extends TokenService {
     private int expirationPeriod;
 
     @Override
-    public String generateToken(final AppUserDTO appUserDetails, final TokenType tokenType) {
+    public String generateJwtToken(final AppUserDTO appUserDetails) {
         Date expiration = Date.from(Instant.from(LocalDate.now().plusDays(expirationPeriod).atStartOfDay(ZoneId.systemDefault())));
         Claims claims = Jwts.claims().setSubject(appUserDetails.getEmail());
         claims.put("userRole", appUserDetails.getUserRole());
@@ -45,8 +47,11 @@ public class JwtTokenService extends TokenService {
     }
 
     @Override
-    public boolean isTokenValid(final String token, final TokenType tokenType) {
-        ActiveTokenEntity tokenFromDB = activeTokenRepository.findByTokenAndTokenType(token, tokenType);
+    public boolean isJwtTokenValid(final String token, final TokenType jwtToken) {
+        if (jwtToken != TokenType.JWT_TOKEN) {
+            throw new SystemException("Required JWT_TOKEN", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        ActiveTokenEntity tokenFromDB = activeTokenRepository.findByTokenAndTokenType(token, jwtToken);
         return Objects.nonNull(tokenFromDB) && new Date(System.currentTimeMillis()).before(getJwtTokenExpiration(token));
     }
 

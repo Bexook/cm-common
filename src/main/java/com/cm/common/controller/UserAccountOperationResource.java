@@ -7,7 +7,6 @@ import com.cm.common.util.AuthorizationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,7 +15,7 @@ import javax.validation.constraints.Pattern;
 import java.net.UnknownHostException;
 import java.util.List;
 
-import static com.cm.common.constant.ApplicationValidationConstants.PASSWORD_REGEX;
+import static com.cm.common.constant.ApplicationConstants.PASSWORD_REGEX;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class UserAccountOperationResource {
 
     @GetMapping("/me")
     public ResponseEntity<AppUserDetails> getCurrentUser() {
-        return ResponseEntity.ok().body(AuthorizationUtil.getCurrentUserNullable());
+        return ResponseEntity.ok().body((AppUserDetails) AuthorizationUtil.getCurrentUser());
     }
 
     @PostMapping("/register")

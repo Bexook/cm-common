@@ -3,12 +3,11 @@ package com.cm.common.service.user;
 import com.cm.common.classifiers.SearchCriteria;
 import com.cm.common.classifiers.Searchable;
 import com.cm.common.model.dto.AppUserDTO;
+import com.cm.common.model.dto.ScheduledJobReportDTO;
 import com.cm.common.model.enumeration.CourseAuthorities;
 import com.cm.common.model.enumeration.UserRole;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.NonNull;
 
-import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,11 +20,11 @@ public interface AppUserService extends Searchable {
 
     void deactivateUserAccount(final Long userId);
 
-    List<CourseAuthorities> getUserAuthorityForCourse(final Long useId, final Long courseId) throws JsonProcessingException;
+    List<CourseAuthorities> getUserAuthorityForCourse(final Long useId, final Long courseId);
 
     AppUserDTO getUserById(final Long id);
 
-    void userRegistration(@NonNull AppUserDTO userEntity) throws UnknownHostException;
+    void userRegistration(@NonNull AppUserDTO userEntity);
 
     void deleteById(Long id);
 
@@ -37,9 +36,9 @@ public interface AppUserService extends Searchable {
 
     AppUserDTO update(final AppUserDTO userDTO);
 
-    void dropNotVerifiedUsers();
+    ScheduledJobReportDTO dropNotVerifiedUsers();
 
-    void sendAccountDeletionWarningNotification();
+    ScheduledJobReportDTO sendAccountDeletionWarningNotification();
 
     Set<AppUserDTO> searchUserByCriteria(final Map<? extends SearchCriteria, Object> criteria);
 

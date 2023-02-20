@@ -10,6 +10,7 @@ import com.cm.common.model.dto.UserEvaluationResultDTO;
 import com.cm.common.model.enumeration.CourseProgressStatus;
 import com.cm.common.model.enumeration.ExamStatus;
 import com.cm.common.repository.ExamEvaluationRepository;
+import com.cm.common.security.AppUserDetails;
 import com.cm.common.service.course.CourseService;
 import com.cm.common.service.exam.ExamResultService;
 import com.cm.common.service.exam.ExamService;
@@ -45,10 +46,11 @@ public class ExamResultServiceImpl implements ExamResultService {
 
     @Override
     public Set<ExamEvaluationDTO> getAllDraftExamsForUserByCourseId(final Long courseId) {
-        final ExamDTO exam = courseService.getCourseById(courseId).getExam();
+        final AppUserDetails userDetails = (AppUserDetails) AuthorizationUtil.getCurrentUser();
+        final ExamDTO exam = courseService.getCourseOverviewById(courseId).getExam();
         return mapper.mapAsSet(examEvaluationRepository.getAllRecordsByExamIdAndUserIdAndStatus(
                         exam.getId(),
-                        AuthorizationUtil.getCurrentUserNullable().getUserId(),
+                        userDetails.getUserId(),
                         ExamStatus.DRAFT),
                 ExamEvaluationDTO.class
         );
@@ -56,9 +58,10 @@ public class ExamResultServiceImpl implements ExamResultService {
 
     @Override
     public UserEvaluationResultDTO evaluateExamGradeForCourse(final Long takeId) {
+        final AppUserDetails userDetails = (AppUserDetails) AuthorizationUtil.getCurrentUser();
         final ExamEvaluationDTO results = mapper.map(examEvaluationRepository.findById(takeId), ExamEvaluationDTO.class);
         final ExamDTO exam = results.getExam();
-        final Set<ExamEvaluationEntity> allDraftTakes = examEvaluationRepository.getAllRecordsByExamIdAndUserIdAndStatus(exam.getId(), AuthorizationUtil.getCurrentUserNullable().getUserId(), ExamStatus.DRAFT);
+        final Set<ExamEvaluationEntity> allDraftTakes = examEvaluationRepository.getAllRecordsByExamIdAndUserIdAndStatus(exam.getId(), userDetails.getUserId(), ExamStatus.DRAFT);
         if (results.getExamStatus() == ExamStatus.DRAFT) {
             throw new SystemException("Finish exam before evaluating results", HttpStatus.BAD_REQUEST);
         }
@@ -69,7 +72,7 @@ public class ExamResultServiceImpl implements ExamResultService {
         final CourseProgressStatus userCourseStatus = exam.getMinGrade() <= userGrade ? CourseProgressStatus.CERTIFIED : CourseProgressStatus.FAILED;
         results.setExamStatus(ExamStatus.EVALUATED);
         examEvaluationRepository.save(mapper.map(results, ExamEvaluationEntity.class));
-        courseService.updateCourseStatusForUserByCourseIdAndUserId(AuthorizationUtil.getCurrentUserNullable().getUserId(), exam.getCourse().getId(), userCourseStatus);
+        courseService.updateCourseStatusForUserByCourseIdAndUserId(userDetails.getUserId(), exam.getCourse().getId(), userCourseStatus);
         examEvaluationRepository.deleteAll(allDraftTakes);
         return new UserEvaluationResultDTO()
                 .setGrade(userGrade)

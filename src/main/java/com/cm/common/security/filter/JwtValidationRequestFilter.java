@@ -4,13 +4,11 @@ package com.cm.common.security.filter;
 import com.cm.common.model.enumeration.TokenType;
 import com.cm.common.security.AppUserDetails;
 import com.cm.common.security.management.jwt.JwtService;
-import com.cm.common.service.token.JwtTokenService;
 import com.cm.common.service.token.TokenService;
-import lombok.AllArgsConstructor;
+import com.cm.common.service.token.impl.TokenServiceImpl;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,7 +37,7 @@ public class JwtValidationRequestFilter extends OncePerRequestFilter {
     @Autowired
     public JwtValidationRequestFilter(@Value("#{'${security.permit-all}'.split(',')}") final Set<String> permitAllUrls,
                                       final JwtService jwtService,
-                                      final JwtTokenService tokenService,
+                                      final TokenService tokenService,
                                       final UserDetailsService appUserDetailsService) {
         this.permitAllUrls = permitAllUrls;
         this.jwtService = jwtService;
@@ -57,7 +55,7 @@ public class JwtValidationRequestFilter extends OncePerRequestFilter {
         } else {
             final String token = jwtService.getTokenJwtFromRequest(request);
             final AppUserDetails appUserDetails = (AppUserDetails) appUserDetailsService.loadUserByUsername(jwtService.getPrincipalFromJwtToken(token));
-            if (Objects.nonNull(appUserDetails) && appUserDetails.isEnabled() && tokenService.isTokenValid(token, TokenType.JWT_TOKEN)) {
+            if (Objects.nonNull(appUserDetails) && appUserDetails.isEnabled() && tokenService.isJwtTokenValid(token, TokenType.JWT_TOKEN)) {
                 final UsernamePasswordAuthenticationToken currentUser =
                         new UsernamePasswordAuthenticationToken(appUserDetails, null, null);
                 SecurityContextHolder

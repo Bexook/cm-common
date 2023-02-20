@@ -3,6 +3,9 @@ package com.cm.common.security;
 import com.cm.common.model.domain.AppUserEntity;
 import com.cm.common.model.enumeration.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +15,9 @@ import java.util.List;
 import java.util.Objects;
 
 
+@Data
+@Builder
+@Accessors(chain = true)
 public class AppUserDetails implements UserDetails {
 
     @JsonIgnore
@@ -20,7 +26,6 @@ public class AppUserDetails implements UserDetails {
     public AppUserDetails(final AppUserEntity appUserEntity) {
         this.appUserEntity = appUserEntity;
     }
-
 
     public Long getUserId() {
         return appUserEntity.getId();

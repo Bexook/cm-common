@@ -1,8 +1,10 @@
 package com.cm.common.model.domain;
 
+import com.cm.common.security.AppUserDetails;
 import com.cm.common.util.AuthorizationUtil;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,6 +12,7 @@ import java.util.Objects;
 
 @Getter
 @Setter
+@Accessors(chain = true)
 @MappedSuperclass
 public class BaseEntity {
     @Id
@@ -34,7 +37,8 @@ public class BaseEntity {
             updatedDate = LocalDateTime.now();
         }
         if (Objects.isNull(updatedBy)) {
-            updatedBy = AuthorizationUtil.getCurrentUserNullable().getAppUserEntity();
+            final AppUserDetails userDetails = (AppUserDetails) AuthorizationUtil.getCurrentUser();
+            updatedBy = userDetails.getAppUserEntity();
         }
     }
 

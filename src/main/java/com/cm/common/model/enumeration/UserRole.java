@@ -10,7 +10,8 @@ public enum UserRole {
     STUDENT(0),
     TEACHER(1),
     ADMIN(2),
-    GOD_MODE(3);
+    GOD_MODE(3),
+    SCHEDULED_JOB(4);
 
     private Integer code;
 

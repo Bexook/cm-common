@@ -9,7 +9,7 @@ import java.util.Properties;
 
 public enum NotificationType {
 
-    ACCOUNT_ACTIVATION("account-deletion-warning-template", "account.activation.email.subject"),
+    ACCOUNT_ACTIVATION("account-activation-email-template", "account.activation.email.subject"),
     ACCOUNT_DELETION_WARNING("account-deletion-warning-template", "account.deletion.warning.email.subject"),
     PASSWORD_REST("password-reset-email-template", "Password reset notification");
 

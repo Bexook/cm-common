@@ -1,15 +1,18 @@
 package com.cm.common.service.user.impl;
 
 import com.cm.common.classifiers.SearchCriteria;
+import com.cm.common.constant.ApplicationConstants;
 import com.cm.common.exception.SystemException;
 import com.cm.common.mapper.OrikaBeanMapper;
 import com.cm.common.model.domain.AppUserEntity;
 import com.cm.common.model.dto.AppUserDTO;
+import com.cm.common.model.dto.ScheduledJobReportDTO;
 import com.cm.common.model.enumeration.*;
 import com.cm.common.repository.AppUserRepository;
+import com.cm.common.security.AppUserDetails;
 import com.cm.common.service.SearchCriteriaExecutor;
 import com.cm.common.service.notification.NotificationService;
-import com.cm.common.service.token.TokenService;
+import com.cm.common.service.token.impl.AccountTokenServiceImpl;
 import com.cm.common.service.user.AppUserService;
 import com.cm.common.util.AuthorizationUtil;
 import com.cm.common.util.JsonUtils;
@@ -46,7 +49,7 @@ public class AppUserServiceImpl implements AppUserService {
     private final PasswordEncoder passwordEncoder;
 
     private final NotificationService notificationService;
-    private final TokenService tokenService;
+    private final AccountTokenServiceImpl accountTokenServiceImpl;
 
     private static final Map<SearchCriteria, SearchCriteriaExecutor<AppUserDTO>> searchCriteriaExecutorMap = new HashMap<>();
 
@@ -63,12 +66,13 @@ public class AppUserServiceImpl implements AppUserService {
     @Override
     @PreAuthorize("@userAccessValidation.isAdmin()")
     public void createUserByAdmin(final AppUserDTO appUser) {
+        final AppUserDetails userDetails = (AppUserDetails) AuthorizationUtil.getCurrentUser();
         if (!appUserRepository.exists(Example.of(new AppUserEntity().setEmail(appUser.getEmail())))) {
             appUser.setEmailVerified(false);
             appUser.setActive(false);
             final AppUserDTO notActiveNewUser = mapper.map(appUserRepository.save(mapper.map(appUser, AppUserEntity.class)), AppUserDTO.class);
             notificationService.generateAndSendTokenMessage(notActiveNewUser, NotificationType.ACCOUNT_ACTIVATION);
-            log.info("New user is created by admin. Admin name: {}\n New user email: {}", AuthorizationUtil.getCurrentUserNullable().getUsername(), appUser.getEmail());
+            log.info("New user is created by admin. Admin name: {}\n New user email: {}", userDetails.getUsername(), appUser.getEmail());
         }
         throw new SystemException("User already exists", HttpStatus.BAD_REQUEST);
     }
@@ -82,8 +86,8 @@ public class AppUserServiceImpl implements AppUserService {
     @Transactional
     @PreAuthorize("@userAccessValidation.isAnonymous()")
     public boolean activateUserAccount(final String token) {
-        final AppUserDTO appUser = tokenService.getUserByToken(token, TokenType.ACCOUNT_ACTIVATION_TOKEN);
-        final boolean valid = tokenService.isTokenValid(token, TokenType.ACCOUNT_ACTIVATION_TOKEN);
+        final AppUserDTO appUser = accountTokenServiceImpl.getUserByToken(token, TokenType.ACCOUNT_ACTIVATION_TOKEN);
+        final boolean valid = accountTokenServiceImpl.isTokenValid(token, TokenType.ACCOUNT_ACTIVATION_TOKEN);
         appUserRepository.updateAccountActiveFlag(appUser.getId(), valid);
         log.info("User account activation result: {} for user: {}", valid ? "SUCCESSFULLY" : "FAILED", appUser.getId());
         return valid;
@@ -98,7 +102,7 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    @PreAuthorize("@userAccessValidation.isCurrentUser(#userId) || @userAccessValidation.isAdmin()")
+    @PreAuthorize("@userAccessValidation.isCurrentUser(#userId) || @userAccessValidation.isAdmin() || @userAccessValidation.isTeacher()")
     @Transactional(readOnly = true)
     public AppUserDTO getUserById(final Long userId) {
         final Optional<AppUserEntity> appUser = appUserRepository.findById(userId);
@@ -133,6 +137,7 @@ public class AppUserServiceImpl implements AppUserService {
     public void deleteById(final Long userId) {
         final AppUserEntity userEntity = appUserRepository.findById(userId)
                 .orElseThrow(() -> new SystemException("User with such id does not exist", HttpStatus.BAD_REQUEST));
+        accountTokenServiceImpl.deleteAllTokensByUserId(List.of(userEntity.getId()));
         appUserRepository.delete(userEntity);
     }
 
@@ -163,31 +168,58 @@ public class AppUserServiceImpl implements AppUserService {
 
 
     @Override
-    @PreAuthorize("@userAccessValidation.onlyScheduledJob()")
-    public void dropNotVerifiedUsers() {
+    @Transactional
+    @PreAuthorize("@userAccessValidation.scheduledJob() || @userAccessValidation.isAdmin()")
+    public ScheduledJobReportDTO dropNotVerifiedUsers() {
+        final ScheduledJobReportDTO report = new ScheduledJobReportDTO();
+        final AppUserDetails userDetails = (AppUserDetails) AuthorizationUtil.getCurrentUser();
         log.info("=================== Fetching not verified accounts ===================");
         final Set<AppUserEntity> notVerifiedAccounts = appUserRepository.findAllByEmailVerified(false).stream()
                 .filter(a -> a.getCreatedDate().plusDays(7).isBefore(LocalDateTime.now()))
                 .collect(Collectors.toSet());
+        report.setImpactedAccountsCount(notVerifiedAccounts.size())
+                .setStartBy(userDetails.getUsername())
+                .setName(ApplicationConstants.ACCOUNT_DELETION_JOB_NAME);
         log.info("=================== Deleting not verified accounts ===================");
-        appUserRepository.deleteAll(notVerifiedAccounts);
-        log.info("=================== Deleted {} accounts ===================", notVerifiedAccounts.size());
+        try {
+            accountTokenServiceImpl.deleteAllTokensByUserId(notVerifiedAccounts.stream().map(AppUserEntity::getId).collect(Collectors.toList()));
+            appUserRepository.deleteAll(notVerifiedAccounts);
+            report.setStatus(JobStatus.SUCCEEDED);
+            log.info("=================== Deleted {} accounts ===================", notVerifiedAccounts.size());
+        } catch (final RuntimeException e) {
+            report.setStatus(JobStatus.FAILED);
+            report.setFailureReason(e.getCause().getMessage());
+            log.error(e.getMessage());
+            log.error("=================== Deletion failed ===================");
+            return report;
+        }
+        return report;
     }
 
 
     @Override
-    @PreAuthorize("@userAccessValidation.onlyScheduledJob()")
-    public void sendAccountDeletionWarningNotification() {
+    @PreAuthorize("@userAccessValidation.scheduledJob() || @userAccessValidation.isAdmin()")
+    public ScheduledJobReportDTO sendAccountDeletionWarningNotification() {
+        final AppUserDetails userDetails = (AppUserDetails) AuthorizationUtil.getCurrentUser();
+        final ScheduledJobReportDTO report = new ScheduledJobReportDTO();
         final Set<AppUserDTO> userToReceiveWarningNotify = getListOfAboutToExpireActivationLink();
-        userToReceiveWarningNotify.forEach(u -> {
-            try {
+        report.setImpactedAccountsCount(userToReceiveWarningNotify.size())
+                .setStartBy(userDetails.getUsername())
+                .setName(ApplicationConstants.ACCOUNT_DELETION_WARNING_JOB_NAME);
+        try {
+            userToReceiveWarningNotify.forEach(u -> {
                 notificationService.generateAndSendTokenMessage(u, NotificationType.ACCOUNT_DELETION_WARNING);
-            } catch (final RuntimeException e) {
-                log.info("Account deletion warning notify sending: FAILED");
-                throw new SystemException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        });
-        log.info("Account deletion warning notify sending: SUCCEED");
+            });
+            report.setStatus(JobStatus.SUCCEEDED);
+            log.info("Account deletion warning notify sending: SUCCEED");
+        } catch (final RuntimeException e) {
+            report.setStatus(JobStatus.FAILED);
+            report.setFailureReason(e.getCause().getMessage());
+            log.info("Account deletion warning notify sending: FAILED");
+            return report;
+        }
+
+        return report;
     }
 
     @Override
@@ -208,9 +240,9 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public boolean updatePassword(final String resetToken, final String newPassword) {
-        final boolean valid = tokenService.isTokenValid(resetToken, TokenType.PASSWORD_RESET_TOKEN);
+        final boolean valid = accountTokenServiceImpl.isTokenValid(resetToken, TokenType.PASSWORD_RESET_TOKEN);
         if (valid) {
-            final AppUserDTO appUser = tokenService.getUserByToken(resetToken, TokenType.PASSWORD_RESET_TOKEN);
+            final AppUserDTO appUser = accountTokenServiceImpl.getUserByToken(resetToken, TokenType.PASSWORD_RESET_TOKEN);
             if (!Objects.equals(appUser.getPassword(), newPassword)) {
                 appUserRepository.updateUserPasswordById(passwordEncoder.encode(newPassword), appUser.getId());
                 return true;

@@ -1,6 +1,5 @@
 package com.cm.common.controller;
 
-import com.cm.common.classifiers.SearchCriteria;
 import com.cm.common.exception.SystemException;
 import com.cm.common.model.dto.CourseDTO;
 import com.cm.common.model.dto.CourseOverviewDTO;
@@ -71,11 +70,7 @@ public class CourseManagementResource {
 
     @PostMapping("/teacher/add")
     public void addTeacherToCourseWithAuthorities(@RequestParam("userId") final Long userId, @RequestParam("courseId") final Long courseId, @RequestBody Set<CourseAuthorities> authorities) {
-        try {
-            courseService.addTeacherToCourseWithAuthorities(userId, courseId, List.copyOf(authorities));
-        } catch (JsonProcessingException e) {
-            throw new SystemException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        courseService.addTeacherToCourseWithAuthorities(userId, courseId, List.copyOf(authorities));
     }
 
     @PostMapping("/teacher/update/authority")

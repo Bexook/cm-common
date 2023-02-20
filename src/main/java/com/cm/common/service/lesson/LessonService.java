@@ -6,6 +6,8 @@ import java.util.Set;
 
 public interface LessonService {
 
+    Integer getUserCourseProgressIndex(final Long courseId);
+
     LessonDTO createLesson(final Long courseId, final LessonDTO lessonDTO);
 
     LessonDTO updateLesson(final LessonDTO lesson);

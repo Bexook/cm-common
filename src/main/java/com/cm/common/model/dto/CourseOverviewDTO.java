@@ -16,6 +16,8 @@ public class CourseOverviewDTO {
     private String description;
     @JsonProperty("lessonAmount")
     private Integer lessonAmount;
+    @JsonProperty("exam")
+    private ExamDTO exam;
 
 
 }

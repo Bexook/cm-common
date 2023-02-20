@@ -1,15 +1,17 @@
 package com.cm.common.model.domain;
 
+import com.cm.common.security.AppUserDetails;
 import com.cm.common.util.AuthorizationUtil;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-//TODO add flag to make course available for registration
+
 @NamedNativeQueries(value = {
         @NamedNativeQuery(name = "bindUserToCourseQuery",
                 query = " INSERT INTO management.app_user_course_reference " +
@@ -47,8 +49,9 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@Entity(name = "course")
-@Table(schema = "management")
+@Accessors(chain = true)
+@Entity
+@Table(schema = "management", name = "course")
 public class CourseEntity extends BaseEntity {
 
     @Column(name = "subject")
@@ -67,11 +70,12 @@ public class CourseEntity extends BaseEntity {
 
     @PrePersist
     void prePersistChild() {
+        final AppUserDetails userDetails = (AppUserDetails) AuthorizationUtil.getCurrentUser();
         if (Objects.isNull(coursePrinciple)) {
-            coursePrinciple = AuthorizationUtil.getCurrentUserNullable().getAppUserEntity();
+            coursePrinciple = userDetails.getAppUserEntity();
         }
         if (Objects.isNull(this.getCreatedBy())) {
-            this.setCreatedBy(AuthorizationUtil.getCurrentUserNullable().getAppUserEntity());
+            this.setCreatedBy(userDetails.getAppUserEntity());
         }
         if (Objects.isNull(this.getCreatedDate())) {
             this.setCreatedDate(LocalDateTime.now());

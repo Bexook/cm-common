@@ -28,6 +28,6 @@ public interface UserAccessValidation {
 
     boolean isCurrentUser(final String email);
 
-    boolean onlyScheduledJob();
+    boolean scheduledJob();
 
 }

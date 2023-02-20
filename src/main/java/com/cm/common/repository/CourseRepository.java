@@ -1,13 +1,12 @@
 package com.cm.common.repository;
 
-import com.cm.common.model.domain.UserCourseReference;
 import com.cm.common.model.domain.CourseEntity;
+import com.cm.common.model.domain.UserCourseReference;
 import com.cm.common.model.enumeration.CourseProgressStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,6 +16,18 @@ import java.util.Set;
 public interface CourseRepository extends JpaRepository<CourseEntity, Long> {
 
     List<CourseEntity> findAllByAvailable(final boolean available);
+
+    @Query(value = "SELECT count('any') > 0 FROM management.app_user_course_reference aucr  WHERE aucr.course_id = :courseId AND aucr.app_user_id = :userId ", nativeQuery = true)
+    boolean isUserAlreadyRegisteredToCourse(final Long userId, final Long courseId);
+
+    @Query(value = "SELECT count('any') FROM management.app_user_course_reference aucr WHERE aucr.course_id = :courseId AND aucr.app_user_id = :userId AND aucr.status = :#{#status.getCode()}", nativeQuery = true)
+    Integer countUserCoursesByStatus(@Param("userId") final Long userId,
+                                     @Param("courseId") final Long courseId,
+                                     @Param("status") final CourseProgressStatus status);
+
+    @Modifying
+    @Query("UPDATE CourseEntity SET available = :status WHERE id = :courseId")
+    void updateCourseAvailabilityStatus(final Long courseId, final boolean status);
 
     @Query(name = "getAllUserCourseReferences", nativeQuery = true)
     Set<UserCourseReference> getAllUserCourseReferences();
@@ -38,6 +49,7 @@ public interface CourseRepository extends JpaRepository<CourseEntity, Long> {
                           @Param("lessonIndex") final Integer lessonIndex);
 
 
+    @Modifying
     @Query(name = "updateUserAuthoritiesForCourse", nativeQuery = true)
     void updateUserAuthoritiesForCourse(@Param("userId") final Long userId,
                                         @Param("courseId") final Long courseId,
@@ -63,8 +75,7 @@ public interface CourseRepository extends JpaRepository<CourseEntity, Long> {
                               @Param("courseId") final Long courseId,
                               @Param("status") final CourseProgressStatus status);
 
-    @Query(value = "SELECT aucr.lesson_index FROM management.app_user_course_reference aucr WHERE aucr.app_user_id = :userId AND aucr.course_id = :courseId", nativeQuery = true)
-    Integer getCurrentLessonIndex(final Long userId, final Long courseId);
+
 
     @Query(value = "SELECT aucr.status FROM management.app_user_course_reference aucr WHERE aucr.user_id = :userId AND aucr.course_id = :courseId", nativeQuery = true)
     CourseProgressStatus getCourseProgressStatus(final Long userId, final Long courseId);

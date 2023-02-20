@@ -10,9 +10,6 @@ import com.cm.common.service.user.AppUserService;
 import com.cm.common.util.AuthorizationUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,13 +49,13 @@ public class UserAccessValidationImpl implements UserAccessValidation {
     }
 
     @Override
-    public boolean hasAuthoritiesForCourse(final Long courseId, final String authority) throws JsonProcessingException {
+    public boolean hasAuthoritiesForCourse(final Long courseId, final String authority) {
         final AppUserDetails loggedUser = getCurrentAppUser();
         return appUserService.getUserAuthorityForCourse(loggedUser.getUserId(), courseId).contains(CourseAuthorities.valueOf(authority));
     }
 
     @Override
-    public boolean hasAuthoritiesForCourseByLessonId(final Long lessonId, final String authority) throws JsonProcessingException {
+    public boolean hasAuthoritiesForCourseByLessonId(final Long lessonId, final String authority) {
         final AppUserDetails loggedUser = getCurrentAppUser();
         final Long courseId = courseService.getCourseByLessonId(lessonId).getId();
         return appUserService.getUserAuthorityForCourse(loggedUser.getUserId(), courseId).contains(CourseAuthorities.valueOf(authority));
@@ -101,16 +98,13 @@ public class UserAccessValidationImpl implements UserAccessValidation {
     }
 
     @Override
-    public boolean onlyScheduledJob() {
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (Objects.equals(authentication.getName(), "system") && authentication.getAuthorities().contains(new SimpleGrantedAuthority("SCHEDULED_JOB"))) {
-            return true;
-        }
-        return false;
+    public boolean scheduledJob() {
+        final AppUserDetails currentUser = getCurrentAppUser();
+        return Objects.equals(currentUser.getUsername(), "SCHEDULED_JOB") && currentUser.getUserRole() == UserRole.SCHEDULED_JOB;
     }
 
     private AppUserDetails getCurrentAppUser() {
-        return (AppUserDetails) AuthorizationUtil.getCurrentUserNullable();
+        return (AppUserDetails) AuthorizationUtil.getCurrentUser();
     }
 
 

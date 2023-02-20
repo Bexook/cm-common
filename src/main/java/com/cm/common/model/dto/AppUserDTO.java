@@ -2,15 +2,16 @@ package com.cm.common.model.dto;
 
 import com.cm.common.model.enumeration.UserRole;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 
-import static com.cm.common.constant.ApplicationValidationConstants.*;
+import static com.cm.common.constant.ApplicationConstants.*;
 
 @Data
+@Accessors(chain = true)
 public class AppUserDTO {
 
     private Long id;

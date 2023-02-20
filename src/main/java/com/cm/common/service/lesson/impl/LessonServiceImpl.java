@@ -5,8 +5,10 @@ import com.cm.common.mapper.OrikaBeanMapper;
 import com.cm.common.model.domain.LessonEntity;
 import com.cm.common.model.dto.LessonDTO;
 import com.cm.common.repository.LessonRepository;
+import com.cm.common.security.AppUserDetails;
 import com.cm.common.service.course.CourseService;
 import com.cm.common.service.lesson.LessonService;
+import com.cm.common.util.AuthorizationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,10 +24,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LessonServiceImpl implements LessonService {
 
-    @Autowired
-    private CourseService courseService;
     private final OrikaBeanMapper mapper;
     private final LessonRepository lessonRepository;
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getUserCourseProgressIndex(final Long courseId) {
+        final AppUserDetails userDetails = (AppUserDetails) AuthorizationUtil.getCurrentUser();
+        return lessonRepository.getCurrentLessonIndex(userDetails.getUserId(), courseId);
+    }
 
     @Override
     @Transactional
@@ -76,7 +84,7 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public Set<LessonDTO> getAvailableForUserLessons(final Long courseId) {
         final Set<LessonDTO> allCourseLessons = findAllLessonsForCourse(courseId);
-        final Integer userProgress = courseService.getUserCourseProgressIndex(courseId);
+        final Integer userProgress = getUserCourseProgressIndex(courseId);
         return allCourseLessons.stream()
                 .filter(l -> l.getIndex() <= userProgress)
                 .collect(Collectors.toSet());

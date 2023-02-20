@@ -7,8 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 
-import static com.cm.common.constant.ApplicationValidationConstants.GENERAL_TEXT_REGEX;
-import static com.cm.common.constant.ApplicationValidationConstants.LESSON_INDEX_REGEX;
+import static com.cm.common.constant.ApplicationConstants.GENERAL_TEXT_REGEX;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

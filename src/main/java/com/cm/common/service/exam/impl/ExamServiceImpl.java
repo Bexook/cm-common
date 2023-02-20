@@ -8,7 +8,6 @@ import com.cm.common.model.enumeration.CourseProgressStatus;
 import com.cm.common.repository.ExamRepository;
 import com.cm.common.service.course.CourseService;
 import com.cm.common.service.exam.ExamService;
-import com.cm.common.service.lesson.LessonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,9 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
-
-import static com.cm.common.constant.ApplicationValidationConstants.NO_EXAMINATION_COURSE_STATUSES;
+import static com.cm.common.constant.ApplicationConstants.NO_EXAMINATION_COURSE_STATUSES;
 
 @Slf4j
 @Service

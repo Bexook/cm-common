@@ -4,12 +4,11 @@ import com.cm.common.model.dto.UserCredentialsDTO;
 import com.cm.common.model.enumeration.TokenType;
 import com.cm.common.security.AppUserDetails;
 import com.cm.common.security.management.jwt.JwtService;
-import com.cm.common.service.token.JwtTokenService;
+import com.cm.common.service.token.impl.TokenServiceImpl;
 import com.cm.common.service.user.AppUserService;
 import com.cm.common.util.JwtUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,7 +25,7 @@ public class JwtServiceImpl implements JwtService {
     private String secretKey;
     private final String AUTHORIZATION = "Authorization";
     @Autowired
-    private JwtTokenService tokenService;
+    private TokenServiceImpl tokenService;
     @Autowired
     private AppUserService appUserService;
     @Autowired
@@ -49,7 +48,7 @@ public class JwtServiceImpl implements JwtService {
                 userDetails.isEnabled() &&
                 userDetails.nonNullProperties() &&
                 passwordEncoder.matches(creds.getPassword(), userDetails.getPassword())) {
-            return tokenService.generateToken(appUserService.findByEmail(userDetails.getUsername()), TokenType.JWT_TOKEN);
+            return tokenService.generateJwtToken(appUserService.findByEmail(userDetails.getUsername()));
         }
         throw new AuthenticationException("Unknown user");
     }

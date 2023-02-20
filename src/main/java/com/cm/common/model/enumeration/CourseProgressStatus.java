@@ -15,7 +15,7 @@ public enum CourseProgressStatus {
     FAILED(4),
     AWAITING_RETEST(5);
 
-    Integer code;
+    private Integer code;
 
     CourseProgressStatus(final Integer code) {
         this.code = code;

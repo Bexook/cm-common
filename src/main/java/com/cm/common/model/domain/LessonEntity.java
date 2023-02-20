@@ -1,5 +1,6 @@
 package com.cm.common.model.domain;
 
+import com.cm.common.security.AppUserDetails;
 import com.cm.common.util.AuthorizationUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -15,9 +16,6 @@ import java.util.Objects;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-@NamedNativeQueries(value = {
-        @NamedNativeQuery(name = "getAllLessonIdsForCourseId", query = "SELECT l.id FROM management.lesson l WHERE l.course_id = :courseId")
-})
 @Entity
 @Table(schema = "management", name = "lesson")
 public class LessonEntity extends BaseEntity {
@@ -41,7 +39,8 @@ public class LessonEntity extends BaseEntity {
     @PrePersist
     void prePersist() {
         if (Objects.isNull(this.getCreatedBy())) {
-            this.setCreatedBy(AuthorizationUtil.getCurrentUserNullable().getAppUserEntity());
+            final AppUserDetails userDetails = (AppUserDetails) AuthorizationUtil.getCurrentUser();
+            this.setCreatedBy(userDetails.getAppUserEntity());
         }
         if (Objects.isNull(this.getCreatedDate())) {
             this.setCreatedDate(LocalDateTime.now());

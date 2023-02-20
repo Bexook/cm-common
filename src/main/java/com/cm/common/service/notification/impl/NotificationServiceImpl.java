@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.thymeleaf.context.Context;
@@ -49,7 +48,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    @PreAuthorize("@userAccessValidation.isAdmin() || @userAccessValidation.onlyScheduledJob() || @userAccessValidation.isAnonymous()")
+//    @PreAuthorize("@userAccessValidation.isAdmin() || @userAccessValidation.scheduledJob() || @userAccessValidation.isAnonymous()")
     public void generateAndSendTokenMessage(final AppUserDTO appUser, final NotificationType notificationType) {
         final Context context = new Context();
         notificationMessageParamsBuilder.get(notificationType).buildParams(appUser, context);

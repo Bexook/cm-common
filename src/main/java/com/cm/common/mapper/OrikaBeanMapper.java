@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,9 @@ public class OrikaBeanMapper {
 
     @SneakyThrows
     public <R, T> R map(T sourceObj, Class<R> r) {
+        if (Objects.isNull(sourceObj)) {
+            return null;
+        }
         mapperFactory.classMap(Class.forName(sourceObj.getClass().getName()), r);
         MapperFacade mapperFacade = mapperFactory.getMapperFacade();
         return mapperFacade.map(sourceObj, r);

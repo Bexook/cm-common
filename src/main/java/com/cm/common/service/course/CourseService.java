@@ -4,6 +4,7 @@ import com.cm.common.classifiers.SearchCriteria;
 import com.cm.common.classifiers.Searchable;
 import com.cm.common.model.dto.CourseDTO;
 import com.cm.common.model.dto.CourseOverviewDTO;
+import com.cm.common.model.dto.ScheduledJobReportDTO;
 import com.cm.common.model.enumeration.CourseAuthorities;
 import com.cm.common.model.enumeration.CourseProgressStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,11 +15,14 @@ import java.util.Set;
 
 public interface CourseService extends Searchable {
 
+
+    void updateCourseAvailabilityStatus(final Long courseId, final boolean status);
+
     CourseOverviewDTO getCourseOverviewById(final Long courseId);
 
     CourseDTO getCourseById(final Long courseId);
 
-    void progressCourseLessonIndex();
+    ScheduledJobReportDTO progressCourseLessonIndex();
 
     void deleteCourseById(final Long courseId);
 
@@ -30,7 +34,7 @@ public interface CourseService extends Searchable {
 
     void registerStudentUserToCourseByAdmin(final Long userId, final Long courseId);
 
-    void addTeacherToCourseWithAuthorities(final Long userId, final Long courseId, final List<CourseAuthorities> authorities) throws JsonProcessingException;
+    void addTeacherToCourseWithAuthorities(final Long userId, final Long courseId, final List<CourseAuthorities> authorities);
 
     void updateCourseAuthoritiesForTeacherById(final Long userId, final Long courseId, final List<CourseAuthorities> authorities) throws JsonProcessingException;
 
@@ -42,10 +46,8 @@ public interface CourseService extends Searchable {
 
     Long getCoursePrincipleIdByLessonId(final Long lessonId);
 
-
     List<CourseOverviewDTO> getCoursesOverview(final boolean isAvailable);
 
-    Integer getUserCourseProgressIndex(final Long courseId);
 
     CourseProgressStatus getUserCourseProgressStatus(final Long courseId);
 
