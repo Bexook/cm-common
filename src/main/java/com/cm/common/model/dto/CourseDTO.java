@@ -35,5 +35,7 @@ public class CourseDTO extends BaseDTO {
     @ToString.Exclude
     @JsonProperty("exam")
     private ExamDTO exam;
+    @JsonProperty("amountOfPoints")
+    private Integer amountOfPoints;
 
 }

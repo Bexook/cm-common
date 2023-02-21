@@ -2,13 +2,13 @@ package com.cm.common.security.management.access.impl;
 
 import com.cm.common.model.dto.AppUserDTO;
 import com.cm.common.model.enumeration.CourseAuthorities;
+import com.cm.common.model.enumeration.MediaType;
 import com.cm.common.model.enumeration.UserRole;
 import com.cm.common.security.AppUserDetails;
 import com.cm.common.security.management.access.UserAccessValidation;
 import com.cm.common.service.course.CourseService;
 import com.cm.common.service.user.AppUserService;
 import com.cm.common.util.AuthorizationUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -101,6 +101,11 @@ public class UserAccessValidationImpl implements UserAccessValidation {
     public boolean scheduledJob() {
         final AppUserDetails currentUser = getCurrentAppUser();
         return Objects.equals(currentUser.getUsername(), "SCHEDULED_JOB") && currentUser.getUserRole() == UserRole.SCHEDULED_JOB;
+    }
+
+    @Override
+    public boolean onlyHomeworkUpload(final MediaType type) {
+        return !(getCurrentAppUser().getUserRole() == UserRole.STUDENT && type != MediaType.PDF_HOMEWORK);
     }
 
     private AppUserDetails getCurrentAppUser() {
