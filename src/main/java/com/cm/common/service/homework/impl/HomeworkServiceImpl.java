@@ -12,6 +12,7 @@ import com.cm.common.service.media.MediaService;
 import com.cm.common.service.media.file.FileUploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +31,7 @@ public class HomeworkServiceImpl implements HomeworkService {
     @Override
     @Transactional
     public void submitHomework(final HomeworkDTO homework) {
-        if (mediaService.existsById(homework.getMedia().getId()) || homework.getMedia().getMediaType() != MediaType.PDF_HOMEWORK) {
+        if (!mediaService.existsById(homework.getMedia().getId()) || homework.getMedia().getMediaType() != MediaType.PDF_HOMEWORK) {
             throw new SystemException("Wrong media.", HttpStatus.BAD_REQUEST);
         }
         homeworkRepository.save(mapper.map(homework, HomeworkEntity.class));
@@ -38,6 +39,7 @@ public class HomeworkServiceImpl implements HomeworkService {
 
     @Override
     @Transactional
+    @PreAuthorize("@userAccessValidation.isTeacher()")
     public void gradeHomework(final HomeworkDTO homework) {
         final HomeworkEntity homeworkEntity = homeworkRepository.findById(homework.getId())
                 .orElseThrow(() -> new SystemException("Homework does not exist", HttpStatus.BAD_REQUEST));
@@ -63,9 +65,8 @@ public class HomeworkServiceImpl implements HomeworkService {
     public void deleteHomework(final Long homeworkId) {
         final HomeworkEntity entity = homeworkRepository.findById(homeworkId)
                 .orElseThrow(() -> new SystemException("Homework does not exist", HttpStatus.BAD_REQUEST));
-        mediaService.deleteMediaById(entity.getMedia().getId());
         homeworkRepository.delete(entity);
-
+        mediaService.deleteMediaById(entity.getMedia().getId());
     }
 
     @Override
@@ -73,7 +74,7 @@ public class HomeworkServiceImpl implements HomeworkService {
     public Set<HomeworkDTO> getLessonHomeworks(final Long lessonId, final boolean evaluated) {
         final Set<HomeworkDTO> homeworks = mapper.mapAsSet(homeworkRepository.getHomeworksForLessonByLessonIdAndEvaluatedFlagValue(lessonId, evaluated), HomeworkDTO.class);
         return homeworks.stream()
-                .peek(h -> h.setMedia(setUrlForMedia(h)))
+                .peek(h -> h.getMedia().setUrl(generateReadUrl(h.getMedia().getKey())))
                 .collect(Collectors.toSet());
     }
 
@@ -84,13 +85,7 @@ public class HomeworkServiceImpl implements HomeworkService {
     }
 
 
-    private MediaDTO setUrlForMedia(final HomeworkDTO homework) {
-        return homework
-                .getMedia()
-                .setUrl(fileUploadService.generateTemporaryLinkForReadingFile(homework
-                                .getMedia()
-                                .getKey()
-                        )
-                );
+    private String generateReadUrl(final String key) {
+        return fileUploadService.generateTemporaryLinkForReadingFile(key);
     }
 }

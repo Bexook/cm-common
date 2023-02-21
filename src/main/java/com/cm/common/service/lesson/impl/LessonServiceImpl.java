@@ -61,8 +61,6 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional(readOnly = true)
-    @PreAuthorize("@userAccessValidation.isAdmin() " +
-            "|| @userAccessValidation.isCoursePrincipleByLessonId(#lessonId)")
     public LessonDTO getLessonData(final Long lessonId) {
         final LessonEntity lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new SystemException("Lesson does not exist", HttpStatus.BAD_REQUEST));

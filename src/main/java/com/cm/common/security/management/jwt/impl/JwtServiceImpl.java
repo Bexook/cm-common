@@ -45,6 +45,7 @@ public class JwtServiceImpl implements JwtService {
     public String loginJwt(final UserCredentialsDTO creds) throws AuthenticationException {
         final AppUserDetails userDetails = (AppUserDetails) appUserDetailsService.loadUserByUsername(creds.getLogin());
         if (Objects.nonNull(userDetails) &&
+                Objects.nonNull(userDetails.getAppUserEntity()) &&
                 userDetails.isEnabled() &&
                 userDetails.nonNullProperties() &&
                 passwordEncoder.matches(creds.getPassword(), userDetails.getPassword())) {

@@ -19,7 +19,7 @@ public interface HomeworkRepository extends JpaRepository<HomeworkEntity, Long> 
 
 
     @Query(name = "getHomeworksForLessonByLessonIdAndEvaluatedFlagValue", nativeQuery = true)
-    Set<HomeworkEntity> getHomeworksForLessonByLessonIdAndEvaluatedFlagValue(@Param("evaluated") final Long lessonId, @Param("lessonId") final boolean evaluated);
+    Set<HomeworkEntity> getHomeworksForLessonByLessonIdAndEvaluatedFlagValue(@Param("lessonId") final Long lessonId, @Param("evaluated") final boolean evaluated);
 
     @Query(name = "getCountedHomeworkGradeForAllLessonsWithEvaluatedFlagTrueAndCourseId", nativeQuery = true)
     List<Integer> getHomeworkGradesForCourseByCourseId(@Param("courseId") final Long courseId, @Param("userId") final Long userId);

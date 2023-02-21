@@ -39,7 +39,7 @@ public class HomeworkResource {
     }
 
 
-    @GetMapping("/delete")
+    @PostMapping("/delete")
     public void deleteHomework(@RequestParam("homeworkId") final Long homeworkId) {
         homeworkService.deleteHomework(homeworkId);
     }

@@ -13,7 +13,7 @@ import static com.cm.common.constant.ApplicationConstants.PASSWORD_REGEX;
 public class UserCredentialsDTO {
 
     @NotNull
-    @Pattern(regexp = EMAIL_REGEX, message = "Bad login")
+//    @Pattern(regexp = EMAIL_REGEX, message = "Bad login")
     @JsonProperty("login")
     private String login;
     @NotNull

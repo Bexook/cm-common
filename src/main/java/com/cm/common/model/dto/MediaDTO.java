@@ -2,6 +2,7 @@ package com.cm.common.model.dto;
 
 import com.cm.common.model.enumeration.MediaType;
 import com.cm.common.model.enumeration.MediaUploadStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,7 +12,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"lesson"})
 public class MediaDTO extends BaseDTO {
     @NotNull
     @JsonProperty("mediaType")
@@ -20,6 +21,7 @@ public class MediaDTO extends BaseDTO {
     private String key;
     @JsonProperty("uploadStatus")
     private MediaUploadStatus uploadStatus;
+    @JsonIgnore
     @JsonProperty("lesson")
     private LessonDTO lesson;
     @JsonProperty("url")
