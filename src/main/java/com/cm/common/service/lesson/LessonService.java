@@ -22,5 +22,6 @@ public interface LessonService {
 
     Set<LessonDTO> getAvailableForUserLessons(final Long courseId);
 
+    boolean existsLessonBySubject(final String subject);
 
 }

@@ -57,6 +57,10 @@ public class CourseServiceImpl implements CourseService {
     @Transactional
     @PreAuthorize("@userAccessValidation.isAdmin() || @userAccessValidation.isCoursePrinciple(#courseId)")
     public void updateCourseAvailabilityStatus(final Long courseId, final boolean status) {
+        final CourseEntity entity = courseRepository.findById(courseId).orElseThrow(() -> new SystemException("Course does nt exist", HttpStatus.BAD_REQUEST));
+        if (Objects.isNull(entity.getAmountOfPoints()) || (Objects.nonNull(entity.getAmountOfPoints()) && entity.getAmountOfPoints() < 50)) {
+            throw new SystemException("Please specify amount of points bigger or equal to 50", HttpStatus.BAD_REQUEST);
+        }
         courseRepository.updateCourseAvailabilityStatus(courseId, status);
     }
 

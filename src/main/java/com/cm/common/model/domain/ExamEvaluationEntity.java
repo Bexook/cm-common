@@ -33,6 +33,7 @@ public class ExamEvaluationEntity {
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
     private ExamStatus status;
-
+    @Column(name = "teacher_note")
+    private String teacherNote;
 
 }

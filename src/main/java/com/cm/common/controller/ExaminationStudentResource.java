@@ -34,8 +34,8 @@ public class ExaminationStudentResource {
         examResultService.saveUserExam(examAnswers);
     }
 
-    @GetMapping("/evaluate")
-    public ResponseEntity<UserEvaluationResultDTO> evaluateUserExam(@RequestParam("takeId") final Long takeId) {
+    @GetMapping("/submit")
+    public ResponseEntity<UserEvaluationResultDTO> submitUserExam(@RequestParam("takeId") final Long takeId) {
         return ResponseEntity.ok().body(examResultService.evaluateExamGradeForCourse(takeId));
     }
 

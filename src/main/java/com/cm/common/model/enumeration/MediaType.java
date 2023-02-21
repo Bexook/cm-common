@@ -8,12 +8,11 @@ import java.util.Objects;
 
 public enum MediaType {
 
-    VIDEO(1), TEXT_FILE(2), PRESENTATION(3), IMG(4);
-
+    VIDEO(1), PDF_HOMEWORK(2), PDF_LESSON_MATERIAL(3), PRESENTATION(4), IMG(5);
 
     private Integer code;
 
-    MediaType(Integer code) {
+    MediaType(final Integer code) {
         this.code = code;
     }
 

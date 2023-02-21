@@ -23,8 +23,8 @@ public class ExaminationTeacherResource {
     }
 
     @PostMapping("/update")
-    public void updateExam(@RequestBody final ExamDTO exam) {
-        examService.updateExam(exam);
+    public ResponseEntity<ExamDTO> updateExam(@RequestBody final ExamDTO exam) {
+        return ResponseEntity.ok().body(examService.updateExam(exam));
     }
 
     @PostMapping("/delete")

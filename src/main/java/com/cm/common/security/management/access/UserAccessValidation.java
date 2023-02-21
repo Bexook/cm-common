@@ -1,5 +1,6 @@
 package com.cm.common.security.management.access;
 
+import com.cm.common.model.enumeration.MediaType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface UserAccessValidation {
@@ -29,5 +30,7 @@ public interface UserAccessValidation {
     boolean isCurrentUser(final String email);
 
     boolean scheduledJob();
+
+    boolean onlyHomeworkUpload(final MediaType type);
 
 }

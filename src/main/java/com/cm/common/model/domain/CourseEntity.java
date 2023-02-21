@@ -60,6 +60,8 @@ public class CourseEntity extends BaseEntity {
     private String description;
     @Column(name = "available")
     private boolean available;
+    @Column(name = "amount_of_points")
+    private Integer amountOfPoints;
     @ManyToOne(targetEntity = AppUserEntity.class)
     @JoinColumn(name = "course_principal", referencedColumnName = "id")
     private AppUserEntity coursePrinciple;

@@ -6,11 +6,9 @@ import com.cm.common.model.domain.LessonEntity;
 import com.cm.common.model.dto.LessonDTO;
 import com.cm.common.repository.LessonRepository;
 import com.cm.common.security.AppUserDetails;
-import com.cm.common.service.course.CourseService;
 import com.cm.common.service.lesson.LessonService;
 import com.cm.common.util.AuthorizationUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -93,5 +91,10 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public Integer calculateLessonAmountForCourse(final Long courseId) {
         return lessonRepository.countByCourseId(courseId);
+    }
+
+    @Override
+    public boolean existsLessonBySubject(final String subject) {
+        return lessonRepository.existsBySubject(subject);
     }
 }
