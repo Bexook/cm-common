@@ -9,7 +9,7 @@ public interface UserAccessValidation {
 
     boolean isAnonymous();
 
-    boolean isCourseTeacherByLessonId(final Long courseId);
+    boolean isCourseTeacherByLessonId(final Long lessonId);
 
     boolean isCourseTeacher(final Long courseId);
 
@@ -18,6 +18,8 @@ public interface UserAccessValidation {
     boolean hasAuthoritiesForCourse(final Long course, String authority) throws JsonProcessingException;
 
     boolean isAdmin();
+
+    boolean managementAccess(final Long courseId);
 
     boolean isTeacher();
 

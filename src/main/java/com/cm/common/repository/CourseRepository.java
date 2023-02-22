@@ -77,7 +77,7 @@ public interface CourseRepository extends JpaRepository<CourseEntity, Long> {
 
 
 
-    @Query(value = "SELECT aucr.status FROM management.app_user_course_reference aucr WHERE aucr.user_id = :userId AND aucr.course_id = :courseId", nativeQuery = true)
+    @Query(value = "SELECT aucr.status FROM management.app_user_course_reference aucr WHERE aucr.app_user_id = :userId AND aucr.course_id = :courseId", nativeQuery = true)
     CourseProgressStatus getCourseProgressStatus(final Long userId, final Long courseId);
 
 

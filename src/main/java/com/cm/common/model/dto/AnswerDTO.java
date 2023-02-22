@@ -1,5 +1,6 @@
 package com.cm.common.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -15,7 +16,9 @@ import static com.cm.common.constant.ApplicationConstants.GENERAL_TEXT_REGEX;
 public class AnswerDTO extends BaseDTO {
 
     @NotNull
+    @JsonProperty("answerValue")
     @Pattern(regexp = GENERAL_TEXT_REGEX)
     private String answerValue;
+    @JsonProperty("rightAnswer")
     private boolean rightAnswer;
 }

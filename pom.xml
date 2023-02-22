@@ -68,7 +68,7 @@
         <dependency>
             <groupId>ma.glasnost.orika</groupId>
             <artifactId>orika-core</artifactId>
-            <version>1.5.2</version>
+            <version>1.5.4</version>
             <scope>compile</scope>
         </dependency>
 
@@ -131,4 +131,40 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>artifact-registry</id>
+            <url>artifactregistry://europe-central2-maven.pkg.dev/hallowed-span-378416/cm-common</url>
+        </snapshotRepository>
+        <repository>
+            <id>artifact-registry</id>
+            <url>artifactregistry://europe-central2-maven.pkg.dev/hallowed-span-378416/cm-common</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>artifact-registry</id>
+            <url>artifactregistry://europe-central2-maven.pkg.dev/hallowed-span-378416/cm-common</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>com.google.cloud.artifactregistry</groupId>
+                <artifactId>artifactregistry-maven-wagon</artifactId>
+                <version>2.2.0</version>
+            </extension>
+        </extensions>
+    </build>
+
+
 </project>

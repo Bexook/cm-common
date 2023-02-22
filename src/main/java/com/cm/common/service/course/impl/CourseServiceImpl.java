@@ -12,6 +12,7 @@ import com.cm.common.repository.CourseRepository;
 import com.cm.common.security.AppUserDetails;
 import com.cm.common.service.SearchCriteriaExecutor;
 import com.cm.common.service.course.CourseService;
+import com.cm.common.service.exam.ExamService;
 import com.cm.common.service.lesson.LessonService;
 import com.cm.common.service.user.AppUserService;
 import com.cm.common.util.AuthorizationUtil;
@@ -42,6 +43,7 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final AppUserService appUserService;
 
+    private final ExamService examService;
     private final LessonService lessonService;
 
     private final Map<SearchCriteria, SearchCriteriaExecutor<CourseOverviewDTO>> searchCriteriaExecutorMap = new HashMap<>();
@@ -75,9 +77,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional(readOnly = true)
-    @PreAuthorize("@userAccessValidation.hasAuthoritiesForCourse(#courseId, 'READ_COURSE') " +
-            " || @userAccessValidation.isCoursePrinciple(#courseId) ||  @userAccessValidation.isCourseTeacher(#courseId)" +
-            " || @userAccessValidation.isAdmin()")
+    @PreAuthorize("@userAccessValidation.hasAuthoritiesForCourse(#courseId, 'READ_COURSE') || @userAccessValidation.managementAccess(#courseId)")
     public CourseOverviewDTO getCourseOverviewById(final Long courseId) {
         final CourseEntity searchExample = new CourseEntity().setAvailable(true);
         searchExample.setId(courseId);
@@ -281,12 +281,13 @@ public class CourseServiceImpl implements CourseService {
 
 
     private CourseOverviewDTO mapToCourseOverviewDTO(final CourseEntity course) {
+        final ExamDTO courseExam = examService.getExamDataForCourse(course.getId());
         final Integer lessonAmount = lessonService.calculateLessonAmountForCourse(course.getId());
         return new CourseOverviewDTO()
                 .setId(course.getId())
                 .setSubject(course.getSubject())
                 .setLessonAmount(lessonAmount)
-                .setExam(mapper.map(course.getExam(), ExamDTO.class))
+                .setExam(courseExam)
                 .setDescription(course.getDescription());
     }
 

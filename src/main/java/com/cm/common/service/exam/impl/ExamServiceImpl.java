@@ -10,6 +10,8 @@ import com.cm.common.service.course.CourseService;
 import com.cm.common.service.exam.ExamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,9 @@ public class ExamServiceImpl implements ExamService {
 
     private final OrikaBeanMapper mapper;
     private final ExamRepository examRepository;
-    private final CourseService courseService;
+    @Lazy
+    @Autowired
+    private CourseService courseService;
 
 
     @Override
@@ -68,7 +72,7 @@ public class ExamServiceImpl implements ExamService {
 
     @Override
     @Transactional(readOnly = true)
-    @PreAuthorize("@userAccessValidation.hasAuthoritiesForCourse(#courseId, 'READ_COURSE') || @userAccessValidation.isAdmin()")
+    @PreAuthorize("@userAccessValidation.hasAuthoritiesForCourse(#courseId, 'READ_COURSE')")
     public ExamDTO getExamDataForCourse(final Long courseId) {
         final CourseProgressStatus userProgressStatus = courseService.getUserCourseProgressStatus(courseId);
         if (NO_EXAMINATION_COURSE_STATUSES.contains(userProgressStatus)) {

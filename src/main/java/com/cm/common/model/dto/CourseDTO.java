@@ -4,12 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.springframework.lang.NonNull;
 
 import javax.validation.constraints.Pattern;
-import java.util.List;
 
 import static com.cm.common.constant.ApplicationConstants.GENERAL_TEXT_REGEX;
 
@@ -28,13 +26,8 @@ public class CourseDTO extends BaseDTO {
     private String description;
     @JsonProperty("coursePrinciple")
     private AppUserDTO coursePrinciple;
-    @JsonProperty("lessons")
-    private List<LessonDTO> lessons;
     @JsonProperty("available")
     private boolean available;
-    @ToString.Exclude
-    @JsonProperty("exam")
-    private ExamDTO exam;
     @JsonProperty("amountOfPoints")
     private Integer amountOfPoints;
 

@@ -1,12 +1,14 @@
 package com.cm.common.security.management.access.impl;
 
 import com.cm.common.model.dto.AppUserDTO;
+import com.cm.common.model.dto.LessonDTO;
 import com.cm.common.model.enumeration.CourseAuthorities;
 import com.cm.common.model.enumeration.MediaType;
 import com.cm.common.model.enumeration.UserRole;
 import com.cm.common.security.AppUserDetails;
 import com.cm.common.security.management.access.UserAccessValidation;
 import com.cm.common.service.course.CourseService;
+import com.cm.common.service.lesson.LessonService;
 import com.cm.common.service.user.AppUserService;
 import com.cm.common.util.AuthorizationUtil;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class UserAccessValidationImpl implements UserAccessValidation {
 
     private final AppUserService appUserService;
     private final CourseService courseService;
+    private final LessonService lessonService;
 
     @Override
     public boolean isAnonymous() {
@@ -45,7 +48,9 @@ public class UserAccessValidationImpl implements UserAccessValidation {
     @Override
     public boolean isCourseTeacherByLessonId(final Long lessonId) {
         final AppUserDetails appUser = getCurrentAppUser();
-        return appUser.getUserRole() == UserRole.TEACHER;
+        final LessonDTO lesson = lessonService.getLessonData(lessonId);
+        final boolean courseTeacher = isCourseTeacher(lesson.getCourse().getId());
+        return appUser.getUserRole() == UserRole.TEACHER && courseTeacher;
     }
 
     @Override
@@ -67,6 +72,10 @@ public class UserAccessValidationImpl implements UserAccessValidation {
         return Objects.nonNull(loggedUser) && loggedUser.getUserRole().equals(UserRole.ADMIN);
     }
 
+    @Override
+    public boolean managementAccess(final Long courseId) {
+        return isCourseTeacher(courseId) || isAdmin() || isCoursePrinciple(courseId);
+    }
 
     @Override
     public boolean isTeacher() {

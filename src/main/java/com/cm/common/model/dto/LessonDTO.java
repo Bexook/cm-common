@@ -8,10 +8,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import static com.cm.common.constant.ApplicationConstants.GENERAL_TEXT_REGEX;
-import static com.cm.common.constant.ApplicationConstants.LESSON_INDEX_REGEX;
 
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"media"})
+@EqualsAndHashCode(callSuper = true)
 public class LessonDTO extends BaseDTO {
     @NotNull
     @JsonProperty("subject")
@@ -24,4 +23,6 @@ public class LessonDTO extends BaseDTO {
     @NotNull
     @JsonProperty("index")
     private Integer index;
+    @JsonProperty(value = "course", access = JsonProperty.Access.WRITE_ONLY)
+    private CourseDTO course;
 }
