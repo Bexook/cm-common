@@ -1,6 +1,7 @@
 package com.cm.common.model.dto;
 
 import com.cm.common.model.enumeration.UserRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -24,6 +25,7 @@ public class AppUserDTO {
     @Pattern(regexp = EMAIL_REGEX, message = "Email does not match requirements")
     @NotBlank(message = "User email is mandatory")
     private String email;
+    @JsonIgnore
     @Pattern(regexp = PASSWORD_REGEX, message = "Password does not match requirements")
     @NotBlank(message = "User password is mandatory")
     private String password;

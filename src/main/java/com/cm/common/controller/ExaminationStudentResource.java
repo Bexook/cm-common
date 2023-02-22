@@ -3,8 +3,8 @@ package com.cm.common.controller;
 import com.cm.common.model.dto.ExamDTO;
 import com.cm.common.model.dto.ExamEvaluationDTO;
 import com.cm.common.model.dto.UserEvaluationResultDTO;
-import com.cm.common.service.exam.ExamService;
 import com.cm.common.service.exam.ExamResultService;
+import com.cm.common.service.exam.ExamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +25,12 @@ public class ExaminationStudentResource {
     }
 
     @GetMapping("/get")
-    public ResponseEntity<ExamDTO> getExam(final Long courseId) {
+    public ResponseEntity<ExamDTO> getExam(@RequestParam("courseId") final Long courseId) {
         return ResponseEntity.ok().body(examService.getExamDataForCourse(courseId));
     }
 
     @PostMapping("/save/answer")
-    public void saveAnswers(final ExamEvaluationDTO examAnswers) {
+    public void saveAnswers(@RequestBody final ExamEvaluationDTO examAnswers) {
         examResultService.saveUserExam(examAnswers);
     }
 

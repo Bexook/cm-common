@@ -65,10 +65,6 @@ public class CourseEntity extends BaseEntity {
     @ManyToOne(targetEntity = AppUserEntity.class)
     @JoinColumn(name = "course_principal", referencedColumnName = "id")
     private AppUserEntity coursePrinciple;
-    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
-    private List<LessonEntity> lessons;
-    @OneToOne(mappedBy = "course")
-    private ExamEntity exam;
 
     @PrePersist
     void prePersistChild() {

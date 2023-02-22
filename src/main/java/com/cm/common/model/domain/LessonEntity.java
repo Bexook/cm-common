@@ -6,16 +6,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Where;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 
 @Data
 @EqualsAndHashCode(callSuper = true)
+@Accessors(chain = true)
 @RequiredArgsConstructor
 @Entity
 @Table(schema = "management", name = "lesson")

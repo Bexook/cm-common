@@ -21,7 +21,6 @@ public class MediaDTO extends BaseDTO {
     private String key;
     @JsonProperty("uploadStatus")
     private MediaUploadStatus uploadStatus;
-    @JsonIgnore
     @JsonProperty("lesson")
     private LessonDTO lesson;
     @JsonProperty("url")

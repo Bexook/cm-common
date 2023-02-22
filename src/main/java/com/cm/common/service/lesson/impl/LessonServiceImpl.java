@@ -2,6 +2,7 @@ package com.cm.common.service.lesson.impl;
 
 import com.cm.common.exception.SystemException;
 import com.cm.common.mapper.OrikaBeanMapper;
+import com.cm.common.model.domain.CourseEntity;
 import com.cm.common.model.domain.LessonEntity;
 import com.cm.common.model.dto.LessonDTO;
 import com.cm.common.repository.LessonRepository;
@@ -9,11 +10,14 @@ import com.cm.common.security.AppUserDetails;
 import com.cm.common.service.lesson.LessonService;
 import com.cm.common.util.AuthorizationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Example;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,6 +43,11 @@ public class LessonServiceImpl implements LessonService {
     public LessonDTO createLesson(final Long courseId, final LessonDTO lessonDTO) {
         if (lessonRepository.existsBySubject(lessonDTO.getSubject())) {
             throw new SystemException("Lesson with given subject already exists try update lesson or create new one with unique subject", HttpStatus.BAD_REQUEST);
+        }
+        final CourseEntity example = new CourseEntity();
+        example.setId(courseId);
+        if (lessonRepository.exists(Example.of(new LessonEntity().setIndex(lessonDTO.getIndex()).setCourse(example)))) {
+            throw new SystemException("Lesson with given index already exists try update lesson index.", HttpStatus.BAD_REQUEST);
         }
         final LessonDTO savedLesson = mapper.map(lessonRepository.save(mapper.map(lessonDTO, LessonEntity.class)), LessonDTO.class);
         lessonRepository.bindLessonToCourse(savedLesson.getId(), courseId);
@@ -69,15 +78,16 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional(readOnly = true)
-    @PreAuthorize("@userAccessValidation.isAdmin() " +
-            "|| @userAccessValidation.isCoursePrinciple(#courseId) " +
-            "|| @userAccessValidation.isCourseTeacher(#courseId)")
+    @PreAuthorize("@userAccessValidation.managementAccess(#courseId)")
     public Set<LessonDTO> findAllLessonsForCourse(final Long courseId) {
-        return Set.copyOf(mapper.mapAsList(lessonRepository.findAll(), LessonDTO.class));
+        return Set.copyOf(mapper.mapAsList(lessonRepository.findAll(), LessonDTO.class)).stream()
+                .sorted(Comparator.comparing(LessonDTO::getIndex))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
 
     @Override
+    @PreAuthorize("@userAccessValidation.hasAuthoritiesForCourse(#courseId, 'READ_COURSE') || @userAccessValidation.managementAccess(#courseId)")
     public Set<LessonDTO> getAvailableForUserLessons(final Long courseId) {
         final Set<LessonDTO> allCourseLessons = findAllLessonsForCourse(courseId);
         final Integer userProgress = getUserCourseProgressIndex(courseId);
