@@ -117,7 +117,9 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
+
 
 
     <dependencyManagement>
@@ -157,6 +159,14 @@
     </repositories>
 
     <build>
+        <plugins>
+            <plugin>
+                <!-- Build an executable JAR -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.0</version>
+            </plugin>
+        </plugins>
         <extensions>
             <extension>
                 <groupId>com.google.cloud.artifactregistry</groupId>
