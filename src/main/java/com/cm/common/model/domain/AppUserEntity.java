@@ -2,7 +2,6 @@ package com.cm.common.model.domain;
 
 import com.cm.common.adapter.CertificateKeysListAdapter;
 import com.cm.common.adapter.UserRoleAdapter;
-import com.cm.common.classifiers.Searchable;
 import com.cm.common.model.enumeration.UserRole;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +11,7 @@ import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -29,7 +29,7 @@ import java.util.Objects;
 @Table(schema = "management")
 @FilterDef(name = "activeFilter", parameters = @ParamDef(name = "isActive", type = "boolean"))
 @Filter(name = "activeFilter", condition = "active=:isActive")
-public class AppUserEntity {
+public class AppUserEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

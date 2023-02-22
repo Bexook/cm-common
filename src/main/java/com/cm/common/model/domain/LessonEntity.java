@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -31,9 +32,6 @@ public class LessonEntity extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     private CourseEntity course;
-
-    @OneToMany(mappedBy = "lesson", fetch = FetchType.LAZY)
-    private List<MediaEntity> media;
 
 
     @PrePersist
