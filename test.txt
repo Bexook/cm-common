@@ -1,10 +1,4 @@
 first_name       ,
 last_name        ,
-email            ,
-password         ,
-role             ,
-certificate_keys ,
-active           ,
-email_verified   ,
 created_date     ,
 updated_date
