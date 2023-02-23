@@ -1,0 +1,31 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <servers>
+        <server>
+            <id>artifact-registry</id>
+            <configuration>
+                <httpConfiguration>
+                    <get>
+                        <usePreemptive>true</usePreemptive>
+                    </get>
+                    <head>
+                        <usePreemptive>true</usePreemptive>
+                    </head>
+                    <put>
+                        <params>
+                            <property>
+                                <name>http.protocol.expect-continue</name>
+                                <value>false</value>
+                            </property>
+                        </params>
+                    </put>
+                </httpConfiguration>
+            </configuration>
+            <username>_json_key_base64</username>
+            <password>
+                ewogICJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsCiAgInByb2plY3RfaWQiOiAiaGFsbG93ZWQtc3Bhbi0zNzg0MTYiLAogICJwcml2YXRlX2tleV9pZCI6ICJjYWQ1MzUzZTFmNmJkYzVhNzRmNjc5OWIyN2NmN2IxZWNhY2IzMTg3IiwKICAicHJpdmF0ZV9rZXkiOiAiLS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tXG5NSUlFdlFJQkFEQU5CZ2txaGtpRzl3MEJBUUVGQUFTQ0JLY3dnZ1NqQWdFQUFvSUJBUURYdi84dU5SbEZpU21sXG5jSU5jc2NoMVdwQ1Z3Ynd5YlNYT2hlQjhtYkpPQ3RJVFlkaHRqaE9JamdFRTA2MXdWVHZ0dGZRZTQwc2QwM296XG5BWTRQZkFLU1hOWkl1Q2NNWXdaVktWZWRHR0Jqd25MdDI2TE1sR0lYOVM3NzR5NnJ6alJmQjVlamhSc3MyOERYXG5KTHZsVzhNZTR2L2VJVERmbk1ReVhkdzRzcDNEVzdON3ZockduVXR2eTZOTHdwdjlsQmN2SU9FdE0zVFdwblVVXG5tWS9BQmMrdUgyMUVGVjZlcjc2eWwydVlkeXlOL1dCTzg0ZytuVkRJV2QzVUZxRnR4dE9TWEdwMkhyNWthSHhWXG5FeWVOYU5wSFhsWktMYmVYL1plaUVLcDB5OFNGRWRJUzRNRG9jMWlrWk9ESE5TMDMwMzR3MytKeEdVL3I1ZE5PXG51Z2FESDhoTkFnTUJBQUVDZ2dFQUJsSGp0L2NLdVRoNkhaUkU2TkYxWVlpb1hSYXFmR0NwbjVuWTJGV0pQVk9BXG5VVnlIb2pmcjl3OVAxTlFkaThHWGFwQnVxUHYzL3BUc0NyUDBOUnhwRjkvN3ovQURCdEFjeHFCYUptb3BJcXIyXG53bVJ4YWFROEZsOFNoQUxrNGxmOVBUNWo4UUNNYWYwNjhpSnJsWjJoUXRXYjhLWVF3REFmcUNrTE15YjZTNWRsXG5pUXZUb2xaOWRCZEdkUWp2Vk9XSEVGVTZHaWE4VEpGZG1rdU5NSFZ0N2JZcjdwNE4rLzlkY0hCWFVScnZKdkFlXG5EMjBZbVR2Q1NtZTZHN2g5WklRRk1EYjVrUUJlbXRRZ1JVNmg4dnZqTlVkanNaL0NQd2hjL0M5TjluU29CcHYyXG5Cd21RQ0tLcGFiNTlxVzNjbGdBTXRqMkRYUFBmUmRPbGZRT3pNSTIrUVFLQmdRRDVIL0x1d0syb3crQ3kwN0VuXG5Na0hFbUZBYzJYUTcyMzVFdlY1YTdUMVdNb2FUby80Rkh3dFpRa0s4bVFKMGMydUNMVkNTWFJQby9UMVVwbXJCXG5JajZmbTJDa1FTNjc3OC96dSs0MWF1Tm9PbHJ4WFVValJ6dUI1VWxIVzlBT2RFRDVNdWhkWkNvakhFemU3U2lGXG40M3ZWcFNVVS9iMTV4aEc4V21ha0R1TkxRUUtCZ1FEZHRFSERhOFFmejNWaVlEWjZsWWlJOHJqV3ovd2FrZXZiXG50Vkt0bXJvRllkalcybWFMM1dobG1TcFlEM1UzM3UwVWJzSlQ4d1pSaVFpcU1JOEdJZkF3ZDJEaUhST0lpK2JEXG5qRko3K0hpTk11ZTZSS0JTRVdibmJNdm12eWZhVFRtMWtneFFzQmxVYWpQajI4ZWtnNkZvQ0RkRmlaalFmTGVjXG5VU1ZpZktWMkRRS0JnSDlXMkZzM3U4eUhDeVQ5VmhFZC9FWWNRTjd1UEI2WWpFdGdySWszdU9HRmhBcVZpYk5lXG5jZk9YRGZ2UERsVXQ1aWN0T0lFSCtMUmdOV2craEZUaVJ6WllPcWJhOXFOejZrekFvL3REL3FkNUpLRTVOcXpZXG5yVTh4UHlxdGdJVFM0WjgvYVV6TGRVcHJIZFBaVDV4WWNpVDdmQi9scjJNK1hqUnoxUUZJNXQvQkFvR0JBTUxwXG5ZOXU3MWN3bHBzeWJTNm9QNXQ2SGpndUZCTjRUSmVtZUN4Y0hiYjJubld5ZXpBTHczNFJhMlFoY1pyQjg4Ni9BXG5CR2FyeFFWUDFXZFNrNXRQb1F2ckdDa1NhUWJtQURZeEdwOVUvaDhjL3U4YXdGd0dZcExaYXBYdHZzckVsQlRXXG5WcTlsY285dFl6dFRFTHpJNE5GR1Q5bDVzL2l2ZlBrWHVpZFE4R0xOQW9HQUJkSkJodW5wM1RZUFpYY2Y4YU9HXG5sb2RYeHFTMEVmK0Q0TVpiQUcraDBTZzJxU0sydWVicGRsWkF0endGdU9XdFl3R1BOZ1Rzb25PWkp3SjYyUnQ1XG5TN0RreTV0elIyOGN5cHJJUExLdjQ0aG9GclhNQmp4YUU1NlB3cWtkbWNwNTF2WXJwZnRwM29QVnV1YzhKQWxIXG5LMTVPWi9kNzlPU0pZTlRsRWkrcGVwMD1cbi0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS1cbiIsCiAgImNsaWVudF9lbWFpbCI6ICIxMDgxNDk0MjEzNDYxLWNvbXB1dGVAZGV2ZWxvcGVyLmdzZXJ2aWNlYWNjb3VudC5jb20iLAogICJjbGllbnRfaWQiOiAiMTExMTIwOTQyOTk5ODM0NTM5NTEwIiwKICAiYXV0aF91cmkiOiAiaHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29tL28vb2F1dGgyL2F1dGgiLAogICJ0b2tlbl91cmkiOiAiaHR0cHM6Ly9vYXV0aDIuZ29vZ2xlYXBpcy5jb20vdG9rZW4iLAogICJhdXRoX3Byb3ZpZGVyX3g1MDlfY2VydF91cmwiOiAiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vb2F1dGgyL3YxL2NlcnRzIiwKICAiY2xpZW50X3g1MDlfY2VydF91cmwiOiAiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vcm9ib3QvdjEvbWV0YWRhdGEveDUwOS8xMDgxNDk0MjEzNDYxLWNvbXB1dGUlNDBkZXZlbG9wZXIuZ3NlcnZpY2VhY2NvdW50LmNvbSIKfQo=
+            </password>
+        </server>
+    </servers>
+
+</settings>
