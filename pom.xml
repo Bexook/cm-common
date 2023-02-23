@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.cm.common</groupId>
     <artifactId>cm-common</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>cm-common</name>
     <packaging>jar</packaging>
     <description>Course Management Common</description>
@@ -137,18 +137,18 @@
     <distributionManagement>
         <snapshotRepository>
             <id>artifact-registry</id>
-            <url>artifactregistry://europe-central2-maven.pkg.dev/hallowed-span-378416/cm-common</url>
+            <url>https://europe-central2-maven.pkg.dev/hallowed-span-378416/cm-common</url>
         </snapshotRepository>
         <repository>
             <id>artifact-registry</id>
-            <url>artifactregistry://europe-central2-maven.pkg.dev/hallowed-span-378416/cm-common</url>
+            <url>https://europe-central2-maven.pkg.dev/hallowed-span-378416/cm-common</url>
         </repository>
     </distributionManagement>
 
     <repositories>
         <repository>
             <id>artifact-registry</id>
-            <url>artifactregistry://europe-central2-maven.pkg.dev/hallowed-span-378416/cm-common</url>
+            <url>https://europe-central2-maven.pkg.dev/hallowed-span-378416/cm-common</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
