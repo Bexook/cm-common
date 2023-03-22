@@ -10,9 +10,8 @@
     </parent>
     <groupId>com.cm.common</groupId>
     <artifactId>cm-common</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
     <name>cm-common</name>
-    <packaging>jar</packaging>
     <description>Course Management Common</description>
     <properties>
         <java.version>11</java.version>
@@ -119,8 +118,6 @@
         </dependency>
 
     </dependencies>
-
-
 
     <dependencyManagement>
         <dependencies>
