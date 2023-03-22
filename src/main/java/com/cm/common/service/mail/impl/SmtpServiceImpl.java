@@ -23,9 +23,6 @@ import java.util.Set;
 @Slf4j
 @Service
 public class SmtpServiceImpl implements SmtpService {
-
-    @Value("#{'${mail.send.to}'.split(',')}")
-    private List<String> to;
     @Value("${mail.send.from}")
     private String from;
     @Value("${mail.smtp.host}")
