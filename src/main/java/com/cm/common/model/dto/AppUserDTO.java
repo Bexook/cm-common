@@ -22,11 +22,8 @@ public class AppUserDTO {
     @Pattern(regexp = USER_NAMES_REGEX,  message = "Last name does not match requirements")
     @NotBlank(message = "User last name is mandatory")
     private String lastName;
-    @Pattern(regexp = EMAIL_REGEX, message = "Email does not match requirements")
     @NotBlank(message = "User email is mandatory")
     private String email;
-    @JsonIgnore
-    @Pattern(regexp = PASSWORD_REGEX, message = "Password does not match requirements")
     @NotBlank(message = "User password is mandatory")
     private String password;
     private UserRole userRole;
