@@ -118,7 +118,8 @@ public class UserAccessValidationImpl implements UserAccessValidation {
     }
 
     private AppUserDetails getCurrentAppUser() {
-        return (AppUserDetails) AuthorizationUtil.getCurrentUser();
+        final Object user = AuthorizationUtil.getCurrentUser();
+        return user instanceof String ? null : ((AppUserDetails) user);
     }
 
 

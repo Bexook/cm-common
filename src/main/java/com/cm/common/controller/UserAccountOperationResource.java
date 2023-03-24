@@ -31,7 +31,7 @@ public class UserAccountOperationResource {
     }
 
     @PostMapping("/register")
-    public void registerUser(@RequestBody @Valid final AppUserDTO user) throws UnknownHostException {
+    public void registerUser(@RequestBody  final AppUserDTO user) {
         userService.userRegistration(user);
     }
 
