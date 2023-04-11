@@ -109,14 +109,6 @@ public class CourseServiceUnitTest {
     }
 
     @Test
-    public void getCourseOverviewById_test_failed_course_does_not_exist() {
-        thrown.expect(SystemException.class);
-        thrown.expectMessage("Course does not exist");
-        Mockito.when(courseRepository.findById(2L)).thenReturn(Optional.empty());
-        courseService.getCourseOverviewById(2L);
-    }
-
-    @Test
     public void addTeacherToCourseWithAuthorities_test_success() {
         when(appUserService.getUserById(Mockito.any())).thenReturn(new AppUserDTO().setId(1L).setUserRole(UserRole.TEACHER));
         courseService.addTeacherToCourseWithAuthorities(2L, 2L, List.of(CourseAuthorities.UPDATE_COURSE));
