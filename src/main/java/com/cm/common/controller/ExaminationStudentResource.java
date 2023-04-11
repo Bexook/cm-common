@@ -3,7 +3,7 @@ package com.cm.common.controller;
 import com.cm.common.model.dto.ExamDTO;
 import com.cm.common.model.dto.ExamEvaluationDTO;
 import com.cm.common.model.dto.UserEvaluationResultDTO;
-import com.cm.common.service.exam.ExamResultService;
+import com.cm.common.service.exam.ExamEvaluationService;
 import com.cm.common.service.exam.ExamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +16,12 @@ import java.util.Set;
 @RequestMapping("/api/exam/student")
 public class ExaminationStudentResource {
 
-    private final ExamResultService examResultService;
+    private final ExamEvaluationService examEvaluationService;
     private final ExamService examService;
 
     @GetMapping("/draft/all")
     public ResponseEntity<Set<ExamEvaluationDTO>> getAllDraftExamsForUser(@RequestParam("courseId") final Long courseId) {
-        return ResponseEntity.ok().body(examResultService.getAllDraftExamsForUserByCourseId(courseId));
+        return ResponseEntity.ok().body(examEvaluationService.getAllDraftExamsForUserByCourseId(courseId));
     }
 
     @GetMapping("/get")
@@ -30,17 +30,17 @@ public class ExaminationStudentResource {
     }
 
     @PostMapping("/save/answer")
-    public void saveAnswers(@RequestBody final ExamEvaluationDTO examAnswers) {
-        examResultService.saveUserExam(examAnswers);
+    public ExamEvaluationDTO saveAnswers(@RequestBody final ExamEvaluationDTO examAnswers) {
+        return examEvaluationService.saveUserExam(examAnswers);
     }
 
     @GetMapping("/submit")
     public ResponseEntity<UserEvaluationResultDTO> submitUserExam(@RequestParam("takeId") final Long takeId) {
-        return ResponseEntity.ok().body(examResultService.evaluateExamGradeForCourse(takeId));
+        return ResponseEntity.ok().body(examEvaluationService.evaluateExamGradeForCourse(takeId));
     }
 
     @PostMapping("/delete")
     public void deleteTakeById(@RequestParam("takeId") final Long takeId) {
-        examResultService.deleteExamDraftByTakeId(takeId);
+        examEvaluationService.deleteExamDraftByTakeId(takeId);
     }
 }

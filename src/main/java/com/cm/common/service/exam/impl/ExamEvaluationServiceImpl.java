@@ -12,7 +12,7 @@ import com.cm.common.model.enumeration.ExamStatus;
 import com.cm.common.repository.ExamEvaluationRepository;
 import com.cm.common.security.AppUserDetails;
 import com.cm.common.service.course.CourseService;
-import com.cm.common.service.exam.ExamResultService;
+import com.cm.common.service.exam.ExamEvaluationService;
 import com.cm.common.service.exam.ExamService;
 import com.cm.common.service.homework.HomeworkService;
 import com.cm.common.util.AuthorizationUtil;
@@ -26,7 +26,7 @@ import java.util.Set;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ExamResultServiceImpl implements ExamResultService {
+public class ExamEvaluationServiceImpl implements ExamEvaluationService {
 
     private final Integer percentsOfPointsToPassEvaluation = 80;
     private final HomeworkService homeworkService;
@@ -37,14 +37,14 @@ public class ExamResultServiceImpl implements ExamResultService {
 
 
     @Override
-    public void saveUserExam(final ExamEvaluationDTO examEvaluation) {
+    public ExamEvaluationDTO saveUserExam(final ExamEvaluationDTO examEvaluation) {
         final Integer amountOfQuestionsInExam = examService.getAmountOfQuestionsForExamById(examEvaluation.getExam().getId());
         if (examEvaluation.getUserResults().size() == amountOfQuestionsInExam) {
             examEvaluation.setExamStatus(ExamStatus.FINISHED);
         } else {
             examEvaluation.setExamStatus(ExamStatus.DRAFT);
         }
-        examEvaluationRepository.save(mapper.map(examEvaluation, ExamEvaluationEntity.class));
+        return mapper.map(examEvaluationRepository.save(mapper.map(examEvaluation, ExamEvaluationEntity.class)), ExamEvaluationDTO.class);
     }
 
     @Override
@@ -74,6 +74,14 @@ public class ExamResultServiceImpl implements ExamResultService {
                 .filter(q -> q.getUserAnswer().isRightAnswer())
                 .map(QuestionResultDTO::getAmountOfPoints)
                 .reduce(0, Integer::sum);
+        if (examGrade < exam.getMinGrade()) {
+            examEvaluationRepository.save(mapper.map(results, ExamEvaluationEntity.class));
+            courseService.updateCourseStatusForUserByCourseIdAndUserId(userDetails.getUserId(), exam.getCourse().getId(), CourseProgressStatus.FAILED);
+            return new UserEvaluationResultDTO()
+                    .setGrade(examGrade)
+                    .setExamStatus(ExamStatus.EVALUATED)
+                    .setCourseProgressStatus(CourseProgressStatus.FAILED);
+        }
         final CourseProgressStatus userCourseStatus = ((homeworkGrade + examGrade) / courseAmountOfPoints) * 100 > percentsOfPointsToPassEvaluation ? CourseProgressStatus.CERTIFIED : CourseProgressStatus.FAILED;
         results.setExamStatus(ExamStatus.EVALUATED);
         examEvaluationRepository.save(mapper.map(results, ExamEvaluationEntity.class));

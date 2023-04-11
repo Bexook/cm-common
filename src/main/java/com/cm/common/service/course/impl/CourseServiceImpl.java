@@ -59,7 +59,7 @@ public class CourseServiceImpl implements CourseService {
     @Transactional
     @PreAuthorize("@userAccessValidation.isAdmin() || @userAccessValidation.isCoursePrinciple(#courseId)")
     public void updateCourseAvailabilityStatus(final Long courseId, final boolean status) {
-        final CourseEntity entity = courseRepository.findById(courseId).orElseThrow(() -> new SystemException("Course does nt exist", HttpStatus.BAD_REQUEST));
+        final CourseEntity entity = courseRepository.findById(courseId).orElseThrow(() -> new SystemException("Course does not exist", HttpStatus.BAD_REQUEST));
         if (Objects.isNull(entity.getAmountOfPoints()) || (Objects.nonNull(entity.getAmountOfPoints()) && entity.getAmountOfPoints() < 50)) {
             throw new SystemException("Please specify amount of points bigger or equal to 50", HttpStatus.BAD_REQUEST);
         }
@@ -171,7 +171,8 @@ public class CourseServiceImpl implements CourseService {
     @Transactional
     @PreAuthorize("@userAccessValidation.isCoursePrinciple(#courseId) || @userAccessValidation.isAdmin()")
     public void updateCourseAuthoritiesForTeacherById(final Long userId, final Long courseId, final List<CourseAuthorities> authorities) {
-        final AppUserDTO appUser = appUserService.getUserById(courseId);
+        validateTeacherLinkedToCourse(userId, courseId);
+        final AppUserDTO appUser = appUserService.getUserById(userId);
         if (appUser.getUserRole() == UserRole.STUDENT || appUser.getUserRole() == UserRole.ADMIN) {
             throw new SystemException("User does not contain required role", HttpStatus.BAD_REQUEST);
         }
@@ -255,6 +256,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void updateCourseStatusForUserByCourseIdAndUserId(final Long userId, final Long courseId, final CourseProgressStatus courseProgressStatus) {
+        if (!courseRepository.existsById(courseId)) {
+            throw new SystemException("Course does not exist", HttpStatus.BAD_REQUEST);
+        }
         courseRepository.updateProgressStatus(userId, courseId, courseProgressStatus);
     }
 
@@ -338,6 +342,14 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.searchByPrinciple(Long.parseLong((String) subject)).stream()
                 .map(this::mapToCourseOverviewDTO)
                 .collect(Collectors.toSet());
+    }
+
+    private void validateTeacherLinkedToCourse(final Long userId, final Long courseId) {
+        final AppUserDTO user = appUserService.getUserById(userId);
+        if (user.getUserRole() != UserRole.TEACHER && !courseRepository.isUserAlreadyRegisteredToCourse(userId, courseId)) {
+            throw new SystemException("Teacher is not linked to course", HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     private static void validateCoursePrinciple(final AppUserDTO principle, final AppUserDetails currentUser) {

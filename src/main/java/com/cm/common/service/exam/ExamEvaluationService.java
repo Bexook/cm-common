@@ -5,11 +5,11 @@ import com.cm.common.model.dto.UserEvaluationResultDTO;
 
 import java.util.Set;
 
-public interface ExamResultService {
+public interface ExamEvaluationService {
 
     Set<ExamEvaluationDTO> getAllDraftExamsForUserByCourseId(final Long courseId);
 
-    void saveUserExam(final ExamEvaluationDTO exam);
+    ExamEvaluationDTO saveUserExam(final ExamEvaluationDTO exam);
 
     UserEvaluationResultDTO evaluateExamGradeForCourse(final Long takeId);
 

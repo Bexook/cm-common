@@ -20,6 +20,7 @@ public interface CourseRepository extends JpaRepository<CourseEntity, Long> {
     @Query(value = "SELECT count('any') > 0 FROM management.app_user_course_reference aucr  WHERE aucr.course_id = :courseId AND aucr.app_user_id = :userId ", nativeQuery = true)
     boolean isUserAlreadyRegisteredToCourse(final Long userId, final Long courseId);
 
+
     @Query(value = "SELECT count('any') FROM management.app_user_course_reference aucr WHERE aucr.course_id = :courseId AND aucr.app_user_id = :userId AND aucr.status = :#{#status.getCode()}", nativeQuery = true)
     Integer countUserCoursesByStatus(@Param("userId") final Long userId,
                                      @Param("courseId") final Long courseId,
