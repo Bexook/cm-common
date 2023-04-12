@@ -285,13 +285,11 @@ public class CourseServiceImpl implements CourseService {
 
 
     private CourseOverviewDTO mapToCourseOverviewDTO(final CourseEntity course) {
-        final ExamDTO courseExam = examService.getExamDataForCourse(course.getId());
         final Integer lessonAmount = lessonService.calculateLessonAmountForCourse(course.getId());
         return new CourseOverviewDTO()
                 .setId(course.getId())
                 .setSubject(course.getSubject())
                 .setLessonAmount(lessonAmount)
-                .setExam(courseExam)
                 .setDescription(course.getDescription());
     }
 
