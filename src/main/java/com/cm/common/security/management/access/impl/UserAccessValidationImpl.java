@@ -109,6 +109,9 @@ public class UserAccessValidationImpl implements UserAccessValidation {
     @Override
     public boolean scheduledJob() {
         final AppUserDetails currentUser = getCurrentAppUser();
+        if (Objects.isNull(currentUser)) {
+            return true;
+        }
         return Objects.equals(currentUser.getUsername(), "SCHEDULED_JOB") && currentUser.getUserRole() == UserRole.SCHEDULED_JOB;
     }
 
