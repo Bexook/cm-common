@@ -24,22 +24,22 @@ public class ExaminationStudentResource {
         return ResponseEntity.ok().body(examEvaluationService.getAllDraftExamsForUserByCourseId(courseId));
     }
 
-    @GetMapping("/get")
+    @GetMapping("/")
     public ResponseEntity<ExamDTO> getExam(@RequestParam("courseId") final Long courseId) {
         return ResponseEntity.ok().body(examService.getExamDataForCourse(courseId));
     }
 
-    @PostMapping("/save/answer")
+    @PostMapping("/answer")
     public ExamEvaluationDTO saveAnswers(@RequestBody final ExamEvaluationDTO examAnswers) {
         return examEvaluationService.saveUserExam(examAnswers);
     }
 
-    @GetMapping("/submit")
+    @PutMapping("/submit")
     public ResponseEntity<UserEvaluationResultDTO> submitUserExam(@RequestParam("takeId") final Long takeId) {
         return ResponseEntity.ok().body(examEvaluationService.evaluateExamGradeForCourse(takeId));
     }
 
-    @PostMapping("/delete")
+    @DeleteMapping("/delete")
     public void deleteTakeById(@RequestParam("takeId") final Long takeId) {
         examEvaluationService.deleteExamDraftByTakeId(takeId);
     }

@@ -17,12 +17,12 @@ public class HomeworkResource {
     private final HomeworkService homeworkService;
 
 
-    @PostMapping("/submit")
+    @PostMapping("/")
     public void submitHomework(@RequestBody final HomeworkDTO homework) {
         homeworkService.submitHomework(homework);
     }
 
-    @PostMapping("/update/{homeworkId}")
+    @PutMapping("/{homeworkId}")
     public void update(@PathVariable final Long homeworkId, @RequestBody final MediaDTO media) {
         homeworkService.updateHomeworkMedia(media, homeworkId);
     }
@@ -39,7 +39,7 @@ public class HomeworkResource {
     }
 
 
-    @PostMapping("/delete")
+    @DeleteMapping("/")
     public void deleteHomework(@RequestParam("homeworkId") final Long homeworkId) {
         homeworkService.deleteHomework(homeworkId);
     }

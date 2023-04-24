@@ -26,18 +26,18 @@ public class LessonResource {
         return ResponseEntity.ok().body(lessonService.createLesson(courseId, lesson));
     }
 
-    @PostMapping("/delete")
+    @DeleteMapping("/")
     public void deleteLesson(@RequestParam("lessonId") final Long lessonId) {
         lessonService.deleteLessonById(lessonId);
     }
 
-    @PostMapping("/update")
+    @PutMapping("/")
     @PreAuthorize("@userAccessValidation.isAdmin() || @userAccessValidation.isTeacher()")
     public ResponseEntity<LessonDTO> updateLesson(@RequestBody final LessonDTO lesson) {
         return ResponseEntity.ok().body(lessonService.updateLesson(lesson));
     }
 
-    @GetMapping("/edit/{lessonId}")
+    @GetMapping("/{lessonId}")
     public ResponseEntity<LessonDTO> getLessonById(@PathVariable("lessonId") final Long lessonId) {
         return ResponseEntity.ok().body(lessonService.getLessonData(lessonId));
     }

@@ -36,7 +36,7 @@ public class UserAccountOperationResource {
     }
 
 
-    @PostMapping("/password/reset/{resetToken}")
+    @PatchMapping("/password/{resetToken}")
     public ResponseEntity<Boolean> updatePassword(@PathVariable("resetToken") final String resetToken,
                                                   @RequestBody @Pattern(regexp = PASSWORD_REGEX, message = "Password does not match requirements")
                                                   @NotBlank(message = "User password is mandatory") final String newPassword) {
@@ -44,18 +44,13 @@ public class UserAccountOperationResource {
     }
 
     @PostMapping("/password/reset")
-    public void passwordRest(@RequestParam("email") final String email) {
+    public void passwordReset(@RequestParam("email") final String email) {
         userService.resetPassword(email);
     }
 
-    @PostMapping("/delete")
+    @DeleteMapping("/")
     public void deactivateUserAccount(@RequestParam(name = "userId") final Long userId) {
         userService.deactivateUserAccount(userId);
-    }
-
-    @PostMapping("/deactivate")
-    public void deleteUser(@RequestParam(name = "userId") final Long id) {
-        userService.deactivateUserAccount(id);
     }
 
     @GetMapping("/get")
@@ -63,7 +58,7 @@ public class UserAccountOperationResource {
         return ResponseEntity.ok().body(userService.findByEmail(email));
     }
 
-    @PostMapping("/activate/{activationToken}")
+    @PatchMapping("/{activationToken}")
     public ResponseEntity<Boolean> activateAccount(@PathVariable final String activationToken) {
         return ResponseEntity.ok().body(userService.activateUserAccount(activationToken));
     }

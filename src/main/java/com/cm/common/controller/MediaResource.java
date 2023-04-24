@@ -16,7 +16,7 @@ public class MediaResource {
     private final MediaService mediaService;
 
 
-    @PostMapping("/upload/{lessonId}")
+    @PostMapping("/{lessonId}")
     public ResponseEntity<MediaDTO> uploadFile(@RequestParam("file") final MultipartFile file,
                                                @PathVariable("lessonId") final Long lessonId,
                                                @RequestParam("type") final MediaType type) {
@@ -24,13 +24,13 @@ public class MediaResource {
     }
 
 
-    @PostMapping("/update/{mediaId}")
+    @PutMapping("/{mediaId}")
     public ResponseEntity<MediaDTO> updateMedia(@RequestParam("file") final MultipartFile file,
                                                 @PathVariable("mediaId") final Long mediaId) {
         return ResponseEntity.ok().body(mediaService.update(file, mediaId));
     }
 
-    @PostMapping("/delete")
+    @DeleteMapping("/delete")
     public void deleteMedia(@RequestParam("mediaId") final Long mediaId) {
         mediaService.deleteMediaById(mediaId);
     }

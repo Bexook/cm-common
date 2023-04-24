@@ -26,7 +26,7 @@ public class CourseManagementResource {
     private final CourseService courseService;
 
 
-    @GetMapping("/edit/{courseId}")
+    @GetMapping("/{courseId}")
     public ResponseEntity<CourseDTO> getCourseData(@PathVariable("courseId") final Long courseId) {
         return ResponseEntity.ok().body(courseService.getCourseById(courseId));
     }
@@ -37,23 +37,23 @@ public class CourseManagementResource {
         return ResponseEntity.ok().body(courseService.createCourse(courseDTO));
     }
 
-    @PostMapping("/delete")
+    @DeleteMapping("/")
     @PreAuthorize("@userAccessValidation.isAdmin()")
     public void deleteCourseById(@RequestParam("courseId") final Long courseId) {
         courseService.deleteCourseById(courseId);
     }
 
-    @PostMapping("/update")
+    @PutMapping("/")
     public ResponseEntity<CourseDTO> updateCourse(@RequestBody final CourseDTO courseDTO) {
         return ResponseEntity.ok().body(courseService.updateCourse(courseDTO));
     }
 
-    @GetMapping("/get/{courseId}")
+    @GetMapping("/overview/{courseId}")
     public ResponseEntity<CourseOverviewDTO> getCourseDataOverview(@PathVariable("courseId") final Long courseId) {
         return ResponseEntity.ok().body(courseService.getCourseOverviewById(courseId));
     }
 
-    @PostMapping("/user/register")
+    @PutMapping("/user")
     public void registerUserToCourse(@RequestParam("courseId") final Long courseId) {
         courseService.registerStudentUserToCourse(courseId);
     }
@@ -63,17 +63,17 @@ public class CourseManagementResource {
         return ResponseEntity.ok().body(courseService.getCoursesOverview(isAvailable));
     }
 
-    @PostMapping("/search")
+    @GetMapping("/search")
     public ResponseEntity<Set<CourseOverviewDTO>> searchByCriteria(@RequestBody(required = false) Map<CourseSearchCriteria, Object> criteria) {
         return ResponseEntity.ok().body(courseService.searchByCriteria(criteria));
     }
 
-    @PostMapping("/teacher/add")
+    @PostMapping("/teacher")
     public void addTeacherToCourseWithAuthorities(@RequestParam("userId") final Long userId, @RequestParam("courseId") final Long courseId, @RequestBody Set<CourseAuthorities> authorities) {
         courseService.addTeacherToCourseWithAuthorities(userId, courseId, List.copyOf(authorities));
     }
 
-    @PostMapping("/teacher/update/authority")
+    @PutMapping("/teacher/authority")
     public void updateTeacherAuthoritiesForCourse(@RequestParam("userId") final Long userId, @RequestParam("courseId") final Long courseId, @RequestBody Set<CourseAuthorities> authorities) {
         try {
             courseService.updateCourseAuthoritiesForTeacherById(userId, courseId, List.copyOf(authorities));
