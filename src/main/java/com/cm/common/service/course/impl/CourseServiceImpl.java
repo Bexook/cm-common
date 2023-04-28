@@ -6,7 +6,10 @@ import com.cm.common.exception.SystemException;
 import com.cm.common.mapper.OrikaBeanMapper;
 import com.cm.common.model.domain.CourseEntity;
 import com.cm.common.model.domain.UserCourseReference;
-import com.cm.common.model.dto.*;
+import com.cm.common.model.dto.AppUserDTO;
+import com.cm.common.model.dto.CourseDTO;
+import com.cm.common.model.dto.CourseOverviewDTO;
+import com.cm.common.model.dto.ScheduledJobReportDTO;
 import com.cm.common.model.enumeration.*;
 import com.cm.common.repository.CourseRepository;
 import com.cm.common.security.AppUserDetails;
@@ -328,7 +331,7 @@ public class CourseServiceImpl implements CourseService {
         if (alreadyRegistered) {
             throw new SystemException("User already registered", HttpStatus.BAD_REQUEST);
         }
-        if (numberOfUserCoursesInProgress >= userAvailableAmount) {
+        if (true) {
             throw new SystemException("Acceded available amount of courses", HttpStatus.BAD_REQUEST);
         }
         if (!courseExistsById) {
