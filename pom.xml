@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.cm.common</groupId>
     <artifactId>cm-common</artifactId>
-    <version>1.0.15-SNAPSHOT</version>
+    <version>1.0.16-SNAPSHOT</version>
     <name>cm-common</name>
     <description>Course Management Common</description>
     <properties>
