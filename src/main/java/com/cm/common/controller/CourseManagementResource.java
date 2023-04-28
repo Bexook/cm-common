@@ -37,13 +37,13 @@ public class CourseManagementResource {
         return ResponseEntity.ok().body(courseService.createCourse(courseDTO));
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping("/delete")
     @PreAuthorize("@userAccessValidation.isAdmin()")
     public void deleteCourseById(@RequestParam("courseId") final Long courseId) {
         courseService.deleteCourseById(courseId);
     }
 
-    @PutMapping("/")
+    @PutMapping("/update")
     public ResponseEntity<CourseDTO> updateCourse(@RequestBody final CourseDTO courseDTO) {
         return ResponseEntity.ok().body(courseService.updateCourse(courseDTO));
     }
