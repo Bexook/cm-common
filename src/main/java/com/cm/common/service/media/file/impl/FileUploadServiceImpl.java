@@ -21,7 +21,7 @@ import java.nio.file.StandardCopyOption;
 @RequiredArgsConstructor
 public class FileUploadServiceImpl implements FileUploadService {
 
-    private final FileRepository fileRepository;
+    private final FileRepository fileRepository = null;
     private final Path localStoragePath = Path.of("upload_failed_files");
 
 
